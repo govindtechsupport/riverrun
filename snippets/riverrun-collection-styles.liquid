@@ -1,0 +1,93 @@
+{% doc %}
+  Shared CSS for the Riverrun collection grid (homepage section and collection page).
+  Render once from every section that outputs `.rr-collection` markup.
+
+  @example
+  {% render 'riverrun-collection-styles' %}
+{% enddoc %}
+
+{% stylesheet %}
+  .rr-collection {
+    padding: 150px var(--rr-gutter) 140px;
+    background: var(--rr-yellow);
+    color: var(--rr-ink);
+    scroll-margin-top: var(--rr-header-height);
+  }
+
+  .rr-collection__head {
+    max-width: 620px;
+    margin: 0 auto 64px;
+    text-align: center;
+  }
+
+  .rr-collection__title {
+    margin: 0;
+    font-family: var(--rr-font-serif);
+    font-size: clamp(44px, 5vw, 72px);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    color: var(--rr-ink);
+  }
+
+  .rr-collection__intro {
+    max-width: 40ch;
+    margin: 18px auto 0;
+    font-family: var(--rr-font-body);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .rr-collection__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    max-width: var(--rr-grid-width);
+    margin: 0 auto;
+  }
+
+  .rr-collection__more {
+    display: flex;
+    justify-content: center;
+    margin-top: 64px;
+  }
+
+  .rr-collection__more-link {
+    padding-bottom: 4px;
+    border-bottom: 1px solid currentcolor;
+    font-family: var(--rr-font-body);
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--rr-ink);
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .rr-collection__more-link:hover {
+    opacity: 0.6;
+  }
+
+  .rr-collection__more-link:focus-visible {
+    outline: 2px solid var(--rr-ink);
+    outline-offset: 4px;
+  }
+
+  .rr-collection__more-link[aria-busy='true'] {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  @media (max-width: 760px) {
+    .rr-collection {
+      padding: 120px var(--rr-gutter) 90px;
+    }
+
+    .rr-collection__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+  }
+{% endstylesheet %}

@@ -1,0 +1,234 @@
+{% comment %}
+  Section contract.
+  Enquiry form for the Bespoke and Contact pages, using Shopify's native contact form
+  (submissions are emailed to the store's customer email). Optional address block
+  (address, email, web, map link) shown beside the form. No phone number by design.
+  @example
+  <!-- templates/page.bespoke.json: "Tell us what you are looking for" -->
+{% endcomment %}
+
+{%- liquid
+  assign form_id = 'rr-enquiry-' | append: section.id
+  assign address = section.settings.address
+-%}
+
+<section class="rr-enquiry" {{ section.shopify_attributes }}>
+  <div class="rr-enquiry__grid{% if address == blank %} rr-enquiry__grid--single{% endif %}">
+    {%- if address != blank -%}
+      <div class="rr-enquiry__details">
+        {%- if section.settings.details_heading != blank -%}
+          <h2 class="rr-enquiry__title">{{ section.settings.details_heading }}</h2>
+        {%- endif -%}
+        <p>{{ address | newline_to_br }}</p>
+        <p>
+          {%- if section.settings.email != blank -%}
+            <a href="mailto:{{ section.settings.email | escape }}">{{ section.settings.email }}</a><br>
+          {%- endif -%}
+          {%- if section.settings.website != blank -%}
+            {{ section.settings.website }}
+          {%- endif -%}
+        </p>
+        {%- if section.settings.map_link != blank -%}
+          <p>
+            <a class="rr-enquiry__map" href="{{ section.settings.map_link }}" target="_blank" rel="noopener">
+              {{- section.settings.map_label -}}
+            </a>
+          </p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="rr-enquiry__formwrap">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="rr-enquiry__title">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+
+      {%- form 'contact', id: form_id, class: 'rr-enquiry__form' -%}
+        {%- if form.posted_successfully? -%}
+          <p class="rr-enquiry__notice" role="status">{{ section.settings.success_message }}</p>
+        {%- endif -%}
+        {%- if form.errors -%}
+          <p class="rr-enquiry__notice rr-enquiry__notice--error" role="alert">
+            {{ form.errors | default_errors }}
+          </p>
+        {%- endif -%}
+
+        <label class="rr-enquiry__field" for="{{ form_id }}-name">
+          <span>{{ section.settings.name_label }}</span>
+          <input id="{{ form_id }}-name" name="contact[name]" type="text" autocomplete="name" required value="{{ form.name | escape }}">
+        </label>
+
+        <label class="rr-enquiry__field" for="{{ form_id }}-email">
+          <span>{{ section.settings.email_label }}</span>
+          <input id="{{ form_id }}-email" name="contact[email]" type="email" autocomplete="email" required value="{{ form.email | escape }}">
+        </label>
+
+        <label class="rr-enquiry__field" for="{{ form_id }}-message">
+          <span>{{ section.settings.message_label }}</span>
+          <textarea id="{{ form_id }}-message" name="contact[body]" rows="6" required>{{ form.body }}</textarea>
+        </label>
+
+        <input type="hidden" name="contact[subject]" value="{{ section.settings.subject | escape }}">
+
+        <button class="rr-enquiry__submit" type="submit">{{ section.settings.button_label }}</button>
+      {%- endform -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .rr-enquiry {
+    padding: 88px var(--rr-gutter) 120px;
+    background: var(--rr-yellow);
+    color: var(--rr-ink);
+  }
+
+  .rr-enquiry__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: 72px;
+    max-width: var(--rr-grid-width);
+    margin: 0 auto;
+  }
+
+  .rr-enquiry__grid--single {
+    grid-template-columns: minmax(0, 640px);
+    justify-content: center;
+  }
+
+  .rr-enquiry__title {
+    margin: 0 0 24px;
+    font-family: var(--rr-font-serif);
+    font-size: clamp(30px, 3vw, 42px);
+    font-weight: 400;
+    line-height: 1.1;
+  }
+
+  .rr-enquiry__details {
+    font-family: var(--rr-font-body);
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .rr-enquiry__details p {
+    margin: 0 0 1em;
+  }
+
+  .rr-enquiry a {
+    color: inherit;
+  }
+
+  .rr-enquiry__map {
+    font-style: italic;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 13px;
+  }
+
+  .rr-enquiry__form {
+    display: grid;
+    gap: 22px;
+  }
+
+  .rr-enquiry__field {
+    display: grid;
+    gap: 8px;
+    font-family: var(--rr-font-body);
+    font-size: 12px;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .rr-enquiry__field input,
+  .rr-enquiry__field textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid rgb(28 24 20 / 35%);
+    border-radius: 0;
+    background: var(--rr-card);
+    font: inherit;
+    font-style: normal;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: var(--rr-ink);
+  }
+
+  .rr-enquiry__field input:focus-visible,
+  .rr-enquiry__field textarea:focus-visible {
+    outline: 2px solid var(--rr-ink);
+    outline-offset: 2px;
+  }
+
+  .rr-enquiry__submit {
+    justify-self: start;
+    padding: 0 0 4px;
+    border: 0;
+    border-bottom: 1px solid currentcolor;
+    background: none;
+    font-family: var(--rr-font-body);
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--rr-ink);
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+  }
+
+  .rr-enquiry__submit:hover {
+    opacity: 0.6;
+  }
+
+  .rr-enquiry__submit:focus-visible {
+    outline: 2px solid var(--rr-ink);
+    outline-offset: 4px;
+  }
+
+  .rr-enquiry__notice {
+    margin: 0;
+    padding: 14px 16px;
+    background: var(--rr-card);
+    font-family: var(--rr-font-body);
+    font-size: 14px;
+  }
+
+  .rr-enquiry__notice--error {
+    border-inline-start: 3px solid var(--rr-red);
+  }
+
+  @media (max-width: 760px) {
+    .rr-enquiry {
+      padding-block: 56px 80px;
+    }
+
+    .rr-enquiry__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 48px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Riverrun enquiry form",
+  "settings": [
+    { "type": "header", "content": "Form" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Tell us what you are looking for" },
+    { "type": "text", "id": "subject", "label": "Email subject", "default": "Website enquiry" },
+    { "type": "text", "id": "name_label", "label": "Name label", "default": "Name" },
+    { "type": "text", "id": "email_label", "label": "Email label", "default": "Email" },
+    { "type": "text", "id": "message_label", "label": "Message label", "default": "Your message" },
+    { "type": "text", "id": "button_label", "label": "Button", "default": "Send enquiry" },
+    { "type": "text", "id": "success_message", "label": "Success message", "default": "Thank you. We will be in touch soon." },
+    { "type": "header", "content": "Details (Contact page)" },
+    { "type": "text", "id": "details_heading", "label": "Details heading", "default": "Visit the showroom" },
+    { "type": "textarea", "id": "address", "label": "Address", "info": "Leave empty to hide the details column." },
+    { "type": "text", "id": "email", "label": "Email address", "info": "Supplied by the client." },
+    { "type": "text", "id": "website", "label": "Website", "default": "www.riverrun.co.za" },
+    { "type": "url", "id": "map_link", "label": "Map link", "info": "A Google Maps link to the showroom." },
+    { "type": "text", "id": "map_label", "label": "Map link label", "default": "View on map" }
+  ],
+  "presets": [{ "name": "Riverrun enquiry form" }]
+}
+{% endschema %}

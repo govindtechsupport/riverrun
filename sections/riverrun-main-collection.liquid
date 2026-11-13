@@ -1,0 +1,147 @@
+{% comment %}
+  Section contract.
+  Riverrun collection page: logo-yellow ground, collection title and description, optional
+  category links (a menu of collections, e.g. Cabinets, Tables, Consoles), and the same
+  product cards as the homepage, 8 at a time with a "Show more" link.
+  @example
+  <!-- templates/collection.json -->
+{% endcomment %}
+
+{% render 'riverrun-collection-styles' %}
+
+<section class="rr-collection rr-collection--page" {{ section.shopify_attributes }}>
+  <div class="rr-collection__head">
+    <h1 class="rr-collection__title">{{ collection.title }}</h1>
+    {%- if collection.description != blank -%}
+      <div class="rr-collection__intro">{{ collection.description }}</div>
+    {%- endif -%}
+  </div>
+
+  {%- assign categories = section.settings.categories -%}
+  {%- if categories != blank and categories.links.size > 0 -%}
+    <nav class="rr-filters" aria-label="{{ section.settings.categories_label | escape }}">
+      <ul class="rr-filters__list">
+        {%- if section.settings.all_url != blank -%}
+          <li>
+            <a
+              class="rr-filters__link"
+              href="{{ section.settings.all_url }}"
+              {% if collection.handle == 'all' %}
+                aria-current="page"
+              {% endif %}
+            >
+              {{- section.settings.all_label -}}
+            </a>
+          </li>
+        {%- endif -%}
+        {%- for link in categories.links -%}
+          <li>
+            <a
+              class="rr-filters__link"
+              href="{{ link.url }}"
+              {% if link.current or link.active %}
+                aria-current="page"
+              {% endif %}
+            >
+              {{- link.title -}}
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+  {%- endif -%}
+
+  {%- paginate collection.products by 8 -%}
+    <rr-show-more class="rr-collection__body">
+      <div class="rr-collection__grid" data-rr-grid>
+        {%- for product in collection.products -%}
+          {%- liquid
+            assign card_loading = 'lazy'
+            if forloop.index <= 4 and paginate.current_page == 1
+              assign card_loading = 'eager'
+            endif
+          -%}
+          {% render 'riverrun-product-card', product: product, loading: card_loading %}
+        {%- endfor -%}
+      </div>
+
+      {%- if paginate.next -%}
+        <div class="rr-collection__more" data-rr-more>
+          <a class="rr-collection__more-link" href="{{ paginate.next.url }}" data-rr-more-link>
+            {{- section.settings.more_label -}}
+          </a>
+        </div>
+      {%- endif -%}
+    </rr-show-more>
+  {%- endpaginate -%}
+</section>
+
+<script src="{{ 'riverrun-show-more.js' | asset_url }}" defer="defer"></script>
+
+{% stylesheet %}
+  .rr-collection--page {
+    padding-top: calc(var(--rr-header-height) + 90px);
+    min-height: 70vh;
+  }
+
+  .rr-collection--page .rr-collection__head {
+    margin-bottom: 36px;
+  }
+
+  .rr-filters {
+    margin: 0 0 56px;
+  }
+
+  .rr-filters__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 34px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .rr-filters__link {
+    padding-bottom: 4px;
+    border-bottom: 1px solid transparent;
+    font-family: var(--rr-font-body);
+    font-size: 14px;
+    font-style: italic;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--rr-ink);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+
+  .rr-filters__link:hover,
+  .rr-filters__link[aria-current='page'] {
+    border-bottom-color: var(--rr-ink);
+    opacity: 1;
+  }
+
+  .rr-filters__link:focus-visible {
+    outline: 2px solid var(--rr-ink);
+    outline-offset: 3px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Riverrun collection page",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "categories",
+      "label": "Category links",
+      "info": "A menu whose links point to collections (Cabinets, Tables, Consoles, Stools and benches, Objects)."
+    },
+    { "type": "text", "id": "categories_label", "label": "Category menu label", "default": "Categories" },
+    { "type": "text", "id": "all_label", "label": "\"All\" link label", "default": "All pieces" },
+    { "type": "url", "id": "all_url", "label": "\"All\" link", "info": "Leave empty to hide it." },
+    { "type": "text", "id": "more_label", "label": "Show more label", "default": "Show more" }
+  ]
+}
+{% endschema %}

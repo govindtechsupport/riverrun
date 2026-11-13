@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "intro": {
+      "type": "riverrun-page-intro",
+      "settings": { "style": "paper", "mark": "川道" }
+    },
+    "form": {
+      "type": "riverrun-enquiry-form",
+      "settings": { "heading": "Tell us what you are looking for", "subject": "Bespoke order enquiry" }
+    }
+  },
+  "order": ["intro", "form"]
+}

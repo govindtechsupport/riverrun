@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "intro": {
+      "type": "riverrun-page-intro",
+      "settings": { "style": "dark", "mark": "川道" }
+    }
+  },
+  "order": ["intro"]
+}
