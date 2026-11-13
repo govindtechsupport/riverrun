@@ -20,7 +20,9 @@ class RrHeader extends HTMLElement {
     this.addEventListener('keydown', (e) => e.key === 'Escape' && this.setMenu(false), { signal });
 
     this.update();
-    window.addEventListener('scroll', () => this.update(), { passive: true, signal });
+    // Horizon scrolls inside `.page-wrapper` on desktop (the window itself never scrolls),
+    // and scroll events do not bubble, so listen on the document in the capture phase.
+    document.addEventListener('scroll', () => this.update(), { passive: true, capture: true, signal });
     window.addEventListener('resize', () => this.update(), { passive: true, signal });
 
     const footerLogo = document.querySelector('[data-rr-footer-logo]');
