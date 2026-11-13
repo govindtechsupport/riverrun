@@ -1,0 +1,291 @@
+{% comment %}
+  Section contract.
+  Bespoke orders page, chosen option 3 (paper + seal): beige paper ground, a red 川道 seal
+  with a label, the headline, intro text and an enquiry link on the left, a framed looping
+  video on the right, and three numbered services below. Falls back to the built-in
+  "opening door" video. The enquiry link opens an email (subject "Bespoke enquiry") when
+  an email is set, otherwise it goes to the link you choose (for example the contact page).
+  @example
+  <!-- templates/page.bespoke.json -->
+{% endcomment %}
+
+{%- liquid
+  assign poster_url = 'riverrun-bespoke-door-still.jpg' | asset_url
+  if section.settings.poster != blank
+    assign poster_url = section.settings.poster | image_url: width: 1600
+  endif
+
+  assign enquiry_href = section.settings.link
+  if section.settings.email != blank
+    assign encoded_subject = section.settings.subject | url_encode
+    assign enquiry_href = 'mailto:' | append: section.settings.email | append: '?subject=' | append: encoded_subject
+  endif
+-%}
+
+<section class="rr-bespoke" style="--rr-bespoke-poster: url('{{ poster_url }}')" {{ section.shopify_attributes }}>
+  <div class="rr-bespoke__wrap">
+    <div class="rr-bespoke__grid">
+      <div class="rr-bespoke__copy">
+        <div class="rr-bespoke__top">
+          {%- if section.settings.seal != blank -%}
+            <span class="rr-bespoke__seal" aria-hidden="true">{{ section.settings.seal }}</span>
+          {%- endif -%}
+          <p class="rr-bespoke__label">{{ section.settings.label | newline_to_br }}</p>
+        </div>
+        <h1 class="rr-bespoke__title">{{ section.settings.heading }}</h1>
+        <div class="rr-bespoke__body">{{ section.settings.text }}</div>
+        {%- if enquiry_href != blank and section.settings.link_label != blank -%}
+          <a class="rr-bespoke__link" href="{{ enquiry_href }}">{{ section.settings.link_label }}</a>
+        {%- endif -%}
+      </div>
+
+      <div class="rr-bespoke__window">
+        <video
+          class="rr-bespoke__video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          aria-hidden="true"
+          tabindex="-1"
+          poster="{{ poster_url }}"
+        >
+          {%- if section.settings.video != blank -%}
+            {%- for source in section.settings.video.sources -%}
+              <source src="{{ source.url }}" type="{{ source.mime_type }}">
+            {%- endfor -%}
+          {%- else -%}
+            <source src="{{ 'riverrun-bespoke-door.mp4' | asset_url }}" type="video/mp4">
+          {%- endif -%}
+        </video>
+      </div>
+    </div>
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="rr-bespoke__steps">
+        {%- for block in section.blocks -%}
+          <div class="rr-bespoke__step" {{ block.shopify_attributes }}>
+            <p class="rr-bespoke__num" aria-hidden="true">{{ block.settings.number }}</p>
+            <h2 class="rr-bespoke__step-title">{{ block.settings.title }}</h2>
+            <p class="rr-bespoke__step-text">{{ block.settings.text }}</p>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<script>
+  (() => {
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.querySelectorAll('.rr-bespoke video').forEach((v) => {
+      v.pause();
+      v.removeAttribute('autoplay');
+    });
+  })();
+</script>
+
+{% stylesheet %}
+  .rr-bespoke {
+    padding: calc(var(--rr-header-height) + 96px) 0 96px;
+    background: var(--rr-card);
+    color: var(--rr-ink);
+  }
+
+  .rr-bespoke__wrap {
+    width: min(var(--rr-grid-width), calc(100% - var(--rr-gutter) * 2));
+    margin: 0 auto;
+  }
+
+  .rr-bespoke__grid {
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+    gap: 64px;
+    align-items: center;
+  }
+
+  .rr-bespoke__top {
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+    margin-bottom: 36px;
+  }
+
+  .rr-bespoke__seal {
+    flex: none;
+    padding: 12px 9px;
+    border: 1px solid var(--rr-red);
+    font-family: var(--rr-font-cjk);
+    font-size: 26px;
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: 0.12em;
+    color: var(--rr-red);
+    text-orientation: upright;
+    writing-mode: vertical-rl;
+  }
+
+  .rr-bespoke__label {
+    margin: 0;
+    padding-top: 4px;
+    font-family: var(--rr-font-caps);
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    line-height: 1.9;
+    text-transform: uppercase;
+  }
+
+  .rr-bespoke__title {
+    margin: 0 0 36px;
+    font-family: var(--rr-font-serif);
+    font-size: clamp(48px, 5vw, 76px);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.015em;
+  }
+
+  .rr-bespoke__body {
+    max-width: 44ch;
+    font-family: var(--rr-font-body);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .rr-bespoke__body p {
+    margin: 0 0 18px;
+  }
+
+  .rr-bespoke__link {
+    display: inline-block;
+    margin-top: 36px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid currentcolor;
+    font-family: var(--rr-font-body);
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--rr-ink);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .rr-bespoke__link:hover,
+  .rr-bespoke__link:focus-visible {
+    color: var(--rr-red);
+  }
+
+  .rr-bespoke__link:focus-visible {
+    outline: 2px solid var(--rr-ink);
+    outline-offset: 4px;
+  }
+
+  .rr-bespoke__window {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--rr-dark) var(--rr-bespoke-poster) center / cover;
+  }
+
+  .rr-bespoke__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .rr-bespoke__steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 36px;
+    margin-top: 96px;
+    padding-top: 36px;
+    border-top: 1px solid var(--rr-ink);
+  }
+
+  .rr-bespoke__num {
+    margin: 0 0 18px;
+    font-family: var(--rr-font-cjk);
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--rr-red);
+  }
+
+  .rr-bespoke__step-title {
+    margin: 0 0 18px;
+    font-family: var(--rr-font-serif);
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.15;
+  }
+
+  .rr-bespoke__step-text {
+    max-width: 34ch;
+    margin: 0;
+    font-family: var(--rr-font-body);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 900px) {
+    .rr-bespoke__grid,
+    .rr-bespoke__steps {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 36px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .rr-bespoke {
+      padding-top: calc(var(--rr-header-height) + 64px);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Riverrun Bespoke",
+  "settings": [
+    { "type": "text", "id": "seal", "label": "Seal", "default": "川道" },
+    { "type": "textarea", "id": "label", "label": "Label", "default": "Bespoke orders\n& collaborations" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Looking for something specific?" },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Our Riverrun team travels to China often, wandering the markets and back-street workshops in search of pieces worth bringing home. Everything in the shop is chosen by hand.</p><p>But sometimes what you have in mind hasn't crossed our path yet. Tell us what you are looking for and we will hunt for it on our next trip, or have it made from scratch by one of our verified craftsmen.</p><p>From a single made-to-measure piece to full interior design consultancy, we love to help you find something that truly belongs.</p>"
+    },
+    { "type": "text", "id": "link_label", "label": "Enquiry link label", "default": "Make an enquiry →" },
+    { "type": "text", "id": "email", "label": "Enquiry email", "info": "hello@riverrun.co.za is still to be confirmed by the client." },
+    { "type": "text", "id": "subject", "label": "Email subject", "default": "Bespoke enquiry" },
+    { "type": "url", "id": "link", "label": "Enquiry link", "info": "Used when no email is set, for example the contact page." },
+    { "type": "video", "id": "video", "label": "Video", "info": "Leave empty to use the built-in opening door video." },
+    { "type": "image_picker", "id": "poster", "label": "Still frame" }
+  ],
+  "blocks": [
+    {
+      "type": "service",
+      "name": "Service",
+      "settings": [
+        { "type": "text", "id": "number", "label": "Number", "default": "一" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Bespoke orders" },
+        { "type": "textarea", "id": "text", "label": "Text" }
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "presets": [
+    {
+      "name": "Riverrun Bespoke",
+      "blocks": [
+        { "type": "service", "settings": { "number": "一", "title": "Bespoke orders", "text": "A piece made to your measurements, or found for you on our next trip to the markets in China." } },
+        { "type": "service", "settings": { "number": "二", "title": "Interior styling", "text": "Help choosing, pairing and placing pieces, from a single corner to a whole home." } },
+        { "type": "service", "settings": { "number": "三", "title": "Collaborations", "text": "Working with interior designers, architects, hotels and restaurants on pieces for their projects." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

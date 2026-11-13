@@ -1,13 +1,15 @@
 {
   "sections": {
-    "intro": {
-      "type": "riverrun-page-intro",
-      "settings": { "style": "paper", "mark": "川道" }
-    },
-    "form": {
-      "type": "riverrun-enquiry-form",
-      "settings": { "heading": "Tell us what you are looking for", "subject": "Bespoke order enquiry" }
+    "bespoke": {
+      "type": "riverrun-bespoke",
+      "blocks": {
+        "service_1": { "type": "service", "settings": { "number": "一", "title": "Bespoke orders", "text": "A piece made to your measurements, or found for you on our next trip to the markets in China." } },
+        "service_2": { "type": "service", "settings": { "number": "二", "title": "Interior styling", "text": "Help choosing, pairing and placing pieces, from a single corner to a whole home." } },
+        "service_3": { "type": "service", "settings": { "number": "三", "title": "Collaborations", "text": "Working with interior designers, architects, hotels and restaurants on pieces for their projects." } }
+      },
+      "block_order": ["service_1", "service_2", "service_3"],
+      "settings": { "email": "hello@riverrun.co.za" }
     }
   },
-  "order": ["intro", "form"]
+  "order": ["bespoke"]
 }

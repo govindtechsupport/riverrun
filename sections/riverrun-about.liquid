@@ -1,0 +1,179 @@
+{% comment %}
+  Section contract.
+  About page, chosen option 1 (shoji video): a full-screen looping video with a dark
+  overlay, a large gold headline on the left, and a centred column on the right with the
+  page heading, the 川道 mark and the story text. Falls back to the built-in shoji room
+  video when no video is set. With reduced motion the video is replaced by its still frame.
+  @example
+  <!-- templates/page.about.json -->
+{% endcomment %}
+
+{%- liquid
+  assign poster_url = 'riverrun-about-still.jpg' | asset_url
+  if section.settings.poster != blank
+    assign poster_url = section.settings.poster | image_url: width: 1920
+  endif
+-%}
+
+<section class="rr-about" style="--rr-about-poster: url('{{ poster_url }}')" {{ section.shopify_attributes }}>
+  <video
+    class="rr-about__video"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="auto"
+    aria-hidden="true"
+    tabindex="-1"
+    poster="{{ poster_url }}"
+    data-rr-band-video
+  >
+    {%- if section.settings.video != blank -%}
+      {%- for source in section.settings.video.sources -%}
+        <source src="{{ source.url }}" type="{{ source.mime_type }}">
+      {%- endfor -%}
+    {%- else -%}
+      <source src="{{ 'riverrun-about.mp4' | asset_url }}" type="video/mp4">
+    {%- endif -%}
+  </video>
+
+  <div class="rr-about__grid">
+    <h1 class="rr-about__headline">{{ section.settings.headline | newline_to_br }}</h1>
+    <div class="rr-about__panel">
+      <h2 class="rr-about__title">{{ section.settings.title }}</h2>
+      {%- if section.settings.mark != blank -%}
+        <p class="rr-about__mark" aria-hidden="true">{{ section.settings.mark }}</p>
+      {%- endif -%}
+      <div class="rr-about__text">{{ section.settings.text }}</div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (() => {
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.querySelectorAll('.rr-about video').forEach((v) => {
+      v.pause();
+      v.removeAttribute('autoplay');
+      v.hidden = true;
+    });
+  })();
+</script>
+
+{% stylesheet %}
+  .rr-about {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow: hidden;
+    background: var(--rr-dark) var(--rr-about-poster) center / cover;
+    color: var(--rr-card);
+  }
+
+  .rr-about::before {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: rgb(10 9 8 / 42%);
+    content: '';
+  }
+
+  .rr-about__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .rr-about__grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 72px;
+    align-items: center;
+    width: min(var(--rr-grid-width), calc(100% - var(--rr-gutter) * 2));
+    min-height: 100vh;
+    min-height: 100svh;
+    margin: 0 auto;
+    padding-top: var(--rr-header-height);
+  }
+
+  .rr-about__headline {
+    margin: 0;
+    font-family: var(--rr-font-serif);
+    font-size: clamp(60px, 6.4vw, 108px);
+    font-weight: 400;
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    color: var(--rr-yellow);
+  }
+
+  .rr-about__panel {
+    max-width: 380px;
+    justify-self: center;
+    text-align: center;
+  }
+
+  .rr-about__title {
+    margin: 0;
+    font-family: var(--rr-font-serif);
+    font-size: clamp(40px, 3.6vw, 52px);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+
+  .rr-about__mark {
+    margin: 18px 0 36px;
+    font-family: var(--rr-font-cjk);
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.06em;
+  }
+
+  .rr-about__text {
+    font-family: var(--rr-font-body);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .rr-about__text p {
+    margin: 0 0 1em;
+  }
+
+  @media (max-width: 900px) {
+    .rr-about__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 56px;
+      padding-block: 140px 80px;
+    }
+
+    .rr-about__panel {
+      justify-self: start;
+      text-align: left;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Riverrun About",
+  "settings": [
+    { "type": "video", "id": "video", "label": "Background video", "info": "Leave empty to use the built-in shoji room video." },
+    { "type": "image_picker", "id": "poster", "label": "Still frame" },
+    { "type": "textarea", "id": "headline", "label": "Headline", "default": "Original Asian\nfurniture with\na story" },
+    { "type": "text", "id": "title", "label": "Heading", "default": "About Riverrun" },
+    { "type": "text", "id": "mark", "label": "Mark", "default": "川道" },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Riverrun is an oriental furniture store offering hand picked, curated original pieces from China. Each piece is chosen for home owners and interior decorators who want something considered and authentic rather than a mass copy.</p>"
+    }
+  ],
+  "presets": [{ "name": "Riverrun About" }]
+}
+{% endschema %}

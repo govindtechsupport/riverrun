@@ -14,6 +14,15 @@
       | image_url: width: 2400
       | image_tag: alt: '', widths: '800, 1200, 1600, 2400', sizes: '100vw', loading: 'lazy', class: 'rr-showroom__photo'
     }}
+  {%- else -%}
+    <img
+      class="rr-showroom__photo"
+      src="{{ 'riverrun-showroom.jpg' | asset_url }}"
+      alt=""
+      width="1600"
+      height="900"
+      loading="lazy"
+    >
   {%- endif -%}
 
   <div class="rr-showroom__card">

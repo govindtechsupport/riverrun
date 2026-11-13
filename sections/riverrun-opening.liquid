@@ -20,13 +20,17 @@
       if side == 'left'
         assign video = left
         assign poster = section.settings.poster_left
+        assign fallback_video = 'riverrun-kimono.mp4' | asset_url
+        assign fallback_poster = 'riverrun-kimono-still.jpg' | asset_url
       else
         assign video = right
         assign poster = section.settings.poster_right
+        assign fallback_video = 'riverrun-shoji.mp4' | asset_url
+        assign fallback_poster = 'riverrun-shoji-still.jpg' | asset_url
       endif
     -%}
     <div class="rr-opening__half">
-      {%- if video != blank -%}
+      {%- if video != blank or poster == blank -%}
         <video
           class="rr-opening__video"
           muted
@@ -39,12 +43,18 @@
             poster="{{ poster | image_url: width: 1600 }}"
           {% elsif video.preview_image != blank %}
             poster="{{ video.preview_image | image_url: width: 1600 }}"
+          {% elsif video == blank %}
+            poster="{{ fallback_poster }}"
           {% endif %}
           data-rr-video
         >
-          {%- for source in video.sources -%}
-            <source src="{{ source.url }}" type="{{ source.mime_type }}">
-          {%- endfor -%}
+          {%- if video != blank -%}
+            {%- for source in video.sources -%}
+              <source src="{{ source.url }}" type="{{ source.mime_type }}">
+            {%- endfor -%}
+          {%- else -%}
+            <source src="{{ fallback_video }}" type="video/mp4">
+          {%- endif -%}
         </video>
       {%- elsif poster != blank -%}
         {{ poster | image_url: width: 1600 | image_tag: alt: '', loading: 'eager', class: 'rr-opening__video' }}
@@ -61,7 +71,14 @@
         | image_tag: alt: shop.name, width: 820, loading: 'eager', fetchpriority: 'high', class: 'rr-opening__logo-img'
       }}
     {%- else -%}
-      <h1 class="rr-opening__logo-text">{{ shop.name }}</h1>
+      <img
+        class="rr-opening__logo-img"
+        src="{{ 'riverrun-logo-beige.png' | asset_url }}"
+        alt="{{ shop.name | escape }}"
+        width="1434"
+        height="271"
+        fetchpriority="high"
+      >
     {%- endif -%}
     {%- if section.settings.tagline != blank -%}
       <p class="rr-opening__tagline">{{ section.settings.tagline }}</p>

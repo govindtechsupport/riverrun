@@ -16,7 +16,14 @@
         | image_tag: alt: shop.name, width: 180, loading: 'lazy', class: 'rr-footer__logo'
       }}
     {%- else -%}
-      <span class="rr-footer__logo-text">{{ shop.name }}</span>
+      <img
+        class="rr-footer__logo"
+        src="{{ 'riverrun-logo-gold.png' | asset_url }}"
+        alt="{{ shop.name | escape }}"
+        width="180"
+        height="34"
+        loading="lazy"
+      >
     {%- endif -%}
     {%- if section.settings.tagline != blank -%}
       <span class="rr-footer__tagline">{{ section.settings.tagline }}</span>

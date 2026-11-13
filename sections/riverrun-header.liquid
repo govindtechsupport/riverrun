@@ -23,7 +23,13 @@
           | image_tag: alt: shop.name, width: 200, loading: 'eager', class: 'rr-header__logo-img'
         }}
       {%- else -%}
-        <span class="rr-header__logo-text">{{ shop.name }}</span>
+        <img
+          class="rr-header__logo-img"
+          src="{{ 'riverrun-logo-gold.png' | asset_url }}"
+          alt="{{ shop.name | escape }}"
+          width="180"
+          height="34"
+        >
       {%- endif -%}
     </a>
 

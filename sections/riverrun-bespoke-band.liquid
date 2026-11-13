@@ -32,6 +32,21 @@
       | image_url: width: 2000
       | image_tag: alt: '', widths: '800, 1200, 1600, 2000', sizes: '100vw', loading: 'lazy', class: 'rr-band__media'
     }}
+  {%- else -%}
+    <video
+      class="rr-band__media"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      aria-hidden="true"
+      tabindex="-1"
+      poster="{{ 'riverrun-bespoke-band-still.jpg' | asset_url }}"
+      data-rr-band-video
+    >
+      <source src="{{ 'riverrun-bespoke-band.mp4' | asset_url }}" type="video/mp4">
+    </video>
   {%- endif -%}
 
   <p class="rr-band__text">{{ section.settings.text }}</p>

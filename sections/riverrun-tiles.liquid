@@ -21,6 +21,16 @@
             loading: 'lazy',
             class: 'rr-tile__img'
         }}
+      {%- else -%}
+        {%- assign fallback = 'riverrun-tile-' | append: forloop.index | append: '.jpg' -%}
+        <img
+          class="rr-tile__img"
+          src="{{ fallback | asset_url }}"
+          alt=""
+          width="1387"
+          height="2400"
+          loading="lazy"
+        >
       {%- endif -%}
       <span class="rr-tile__label">{{ block.settings.label | newline_to_br | strip_newlines }}</span>
       <span class="rr-tile__mark" aria-hidden="true">{{ block.settings.mark }}</span>
