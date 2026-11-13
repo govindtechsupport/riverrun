@@ -1,0 +1,163 @@
+{% comment %}
+  Section contract.
+  "The Collection" block on the logo-yellow ground: heading, one intro line, and a grid of
+  Riverrun product cards four across (two on phones) inside a 1182px block with 18px gaps.
+  Shows 8 pieces first, then a "Show more" link that adds 8 at a time. The link is a real
+  pagination link, so it still works without JavaScript.
+  @example
+  <!-- templates/index.json: pick the collection holding all pieces -->
+{% endcomment %}
+
+{%- liquid
+  assign source = section.settings.collection
+  if source == blank
+    assign source = collections.all
+  endif
+-%}
+
+<section class="rr-collection" id="rr-shop" {{ section.shopify_attributes }}>
+  <div class="rr-collection__head">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="rr-collection__title">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.intro != blank -%}
+      <p class="rr-collection__intro">{{ section.settings.intro }}</p>
+    {%- endif -%}
+  </div>
+
+  {%- paginate source.products by 8 -%}
+    <rr-show-more class="rr-collection__body">
+      <div class="rr-collection__grid" data-rr-grid>
+        {%- for product in source.products -%}
+          {%- liquid
+            assign card_loading = 'lazy'
+            if forloop.index <= 4 and paginate.current_page == 1
+              assign card_loading = 'eager'
+            endif
+          -%}
+          {% render 'riverrun-product-card', product: product, loading: card_loading %}
+        {%- endfor -%}
+      </div>
+
+      {%- if paginate.next -%}
+        <div class="rr-collection__more" data-rr-more>
+          <a class="rr-collection__more-link" href="{{ paginate.next.url }}" data-rr-more-link>
+            {{- section.settings.more_label -}}
+          </a>
+        </div>
+      {%- endif -%}
+    </rr-show-more>
+  {%- endpaginate -%}
+
+</section>
+
+<script src="{{ 'riverrun-show-more.js' | asset_url }}" defer="defer"></script>
+
+{% stylesheet %}
+  .rr-collection {
+    padding: 150px var(--rr-gutter) 140px;
+    background: var(--rr-yellow);
+    color: var(--rr-ink);
+    scroll-margin-top: var(--rr-header-height);
+  }
+
+  .rr-collection__head {
+    max-width: 620px;
+    margin: 0 auto 64px;
+    text-align: center;
+  }
+
+  .rr-collection__title {
+    margin: 0;
+    font-family: var(--rr-font-serif);
+    font-size: clamp(44px, 5vw, 72px);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    color: var(--rr-ink);
+  }
+
+  .rr-collection__intro {
+    max-width: 40ch;
+    margin: 18px auto 0;
+    font-family: var(--rr-font-body);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .rr-collection__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    max-width: var(--rr-grid-width);
+    margin: 0 auto;
+  }
+
+  .rr-collection__more {
+    display: flex;
+    justify-content: center;
+    margin-top: 64px;
+  }
+
+  .rr-collection__more-link {
+    padding-bottom: 4px;
+    border-bottom: 1px solid currentcolor;
+    font-family: var(--rr-font-body);
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--rr-ink);
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .rr-collection__more-link:hover {
+    opacity: 0.6;
+  }
+
+  .rr-collection__more-link:focus-visible {
+    outline: 2px solid var(--rr-ink);
+    outline-offset: 4px;
+  }
+
+  .rr-collection__more-link[aria-busy='true'] {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  @media (max-width: 760px) {
+    .rr-collection {
+      padding: 120px var(--rr-gutter) 90px;
+    }
+
+    .rr-collection__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Riverrun collection",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection",
+      "info": "Leave empty to show all products."
+    },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "The Collection" },
+    {
+      "type": "text",
+      "id": "intro",
+      "label": "Intro line",
+      "default": "Original pieces from China, hand picked one at a time."
+    },
+    { "type": "text", "id": "more_label", "label": "Show more label", "default": "Show more" }
+  ],
+  "presets": [{ "name": "Riverrun collection" }]
+}
+{% endschema %}

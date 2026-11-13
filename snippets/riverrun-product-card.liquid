@@ -1,0 +1,135 @@
+{% doc %}
+  Riverrun product card: beige card, product name in wide-spaced capitals at the top,
+  the front-on photo at the bottom (grows 4% on hover) and the price fading in at the
+  bottom on hover (always visible on touch screens). Out-of-stock products show "Sold".
+
+  @param {product} product - The product to render.
+  @param {string} [loading] - Image loading strategy: 'lazy' (default) or 'eager'.
+
+  @example
+  {% render 'riverrun-product-card', product: product %}
+{% enddoc %}
+
+{%- liquid
+  assign card_loading = loading | default: 'lazy'
+  assign image = product.featured_image
+-%}
+
+<a class="rr-card" href="{{ product.url }}" data-rr-card>
+  <span class="rr-card__name">{{ product.title | escape }}</span>
+  {%- if image != blank -%}
+    {{
+      image
+      | image_url: width: 900
+      | image_tag:
+        alt: image.alt | default: product.title,
+        widths: '300, 450, 600, 900',
+        sizes: '(max-width: 760px) 45vw, 280px',
+        loading: card_loading,
+        class: 'rr-card__pic'
+    }}
+  {%- endif -%}
+  <span class="rr-card__price">
+    {%- if product.available -%}
+      {{ product.price | money_without_trailing_zeros }}
+    {%- else -%}
+      {{ 'products.product.sold_out' | t }}
+    {%- endif -%}
+  </span>
+</a>
+
+{% stylesheet %}
+  .rr-card {
+    position: relative;
+    display: block;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: var(--rr-card);
+    color: var(--rr-ink);
+    text-decoration: none;
+  }
+
+  .rr-card__name {
+    position: absolute;
+    top: 19%;
+    right: 0;
+    left: 0;
+    padding-inline: 8px;
+    font-family: var(--rr-font-caps);
+    font-size: clamp(11px, 1.05vw, 15px);
+    letter-spacing: 0.22em;
+    text-indent: 0.22em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .rr-card__pic {
+    position: absolute;
+    bottom: 12%;
+    left: 50%;
+    width: auto;
+    height: auto;
+    max-width: 70%;
+    max-height: 40%;
+    object-fit: contain;
+    filter: drop-shadow(0 12px 12px rgb(40 30 15 / 14%));
+    transform: translateX(-50%);
+    transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .rr-card:hover .rr-card__pic,
+  .rr-card:focus-visible .rr-card__pic {
+    transform: translateX(-50%) scale(1.04);
+  }
+
+  .rr-card__price {
+    position: absolute;
+    right: 0;
+    bottom: 5%;
+    left: 0;
+    font-family: var(--rr-font-body);
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    text-align: center;
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(4px);
+    transition:
+      opacity 0.4s ease,
+      transform 0.4s ease;
+  }
+
+  .rr-card:hover .rr-card__price,
+  .rr-card:focus-visible .rr-card__price {
+    opacity: 1;
+    transform: none;
+  }
+
+  .rr-card:focus-visible {
+    outline: 2px solid var(--rr-ink);
+    outline-offset: 3px;
+  }
+
+  @media (hover: none) {
+    .rr-card__price {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .rr-card__name {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-indent: 0.14em;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rr-card__pic,
+    .rr-card__price {
+      transition: none;
+    }
+  }
+{% endstylesheet %}

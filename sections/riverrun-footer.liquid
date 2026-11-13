@@ -1,0 +1,150 @@
+{% comment %}
+  Section contract.
+  Riverrun footer: dark background, small gold logo with the tagline lockup underneath,
+  address, email and web address, and a link list (Instagram, Shipping, Terms).
+  The logo carries `data-rr-footer-logo` so the header logo can fade out when it appears.
+  @example
+  <!-- Lives in sections/footer-group.json -->
+{% endcomment %}
+
+<div class="rr-footer" {{ section.shopify_attributes }}>
+  <div class="rr-footer__lockup" data-rr-footer-logo>
+    {%- if section.settings.logo != blank -%}
+      {{
+        section.settings.logo
+        | image_url: width: 400
+        | image_tag: alt: shop.name, width: 180, loading: 'lazy', class: 'rr-footer__logo'
+      }}
+    {%- else -%}
+      <span class="rr-footer__logo-text">{{ shop.name }}</span>
+    {%- endif -%}
+    {%- if section.settings.tagline != blank -%}
+      <span class="rr-footer__tagline">{{ section.settings.tagline }}</span>
+    {%- endif -%}
+  </div>
+
+  <div class="rr-footer__col">{{ section.settings.address }}</div>
+
+  <div class="rr-footer__col">
+    {%- if section.settings.email != blank -%}
+      <a href="mailto:{{ section.settings.email | escape }}">{{ section.settings.email }}</a><br>
+    {%- endif -%}
+    {%- if section.settings.website != blank -%}
+      <a href="https://{{ section.settings.website | remove: 'https://' | remove: 'http://' | escape }}">
+        {{- section.settings.website | remove: 'https://' | remove: 'http://' -}}
+      </a>
+    {%- endif -%}
+  </div>
+
+  <div class="rr-footer__col">
+    {%- if section.settings.menu != blank -%}
+      {%- for link in section.settings.menu.links -%}
+        <a href="{{ link.url }}">{{ link.title }}</a><br>
+      {%- endfor -%}
+    {%- endif -%}
+    <span class="rr-footer__muted">&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}</span>
+  </div>
+</div>
+
+{% stylesheet %}
+  .rr-footer {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+    align-items: start;
+    padding: 52px var(--rr-gutter);
+    background: var(--rr-dark);
+    color: var(--rr-light);
+    font-family: var(--rr-font-body);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    line-height: 1.9;
+    text-transform: uppercase;
+  }
+
+  .rr-footer a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .rr-footer a:hover,
+  .rr-footer a:focus-visible {
+    color: var(--rr-red);
+  }
+
+  .rr-footer a:focus-visible {
+    outline: 2px solid var(--rr-light);
+    outline-offset: 3px;
+  }
+
+  .rr-footer__lockup {
+    width: min(180px, 100%);
+  }
+
+  .rr-footer__logo {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-bottom: 9px;
+  }
+
+  .rr-footer__logo-text {
+    display: block;
+    font-family: var(--rr-font-caps);
+    color: var(--rr-yellow);
+    font-size: 1.25rem;
+    letter-spacing: 0.2em;
+  }
+
+  .rr-footer__tagline {
+    display: block;
+    font-family: var(--rr-font-caps);
+    font-size: 6.5px;
+    letter-spacing: 0.38em;
+    word-spacing: 0.3em;
+    text-indent: 0.38em;
+    text-align: center;
+    white-space: nowrap;
+    line-height: 1.4;
+    opacity: 0.9;
+  }
+
+  .rr-footer__muted {
+    opacity: 0.65;
+  }
+
+  @media (max-width: 760px) {
+    .rr-footer {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      padding-block: 36px;
+    }
+
+    .rr-footer__lockup {
+      width: min(148px, 100%);
+    }
+
+    .rr-footer__tagline {
+      white-space: normal;
+      letter-spacing: 0.3em;
+      word-spacing: 0.2em;
+      text-indent: 0.3em;
+      line-height: 1.8;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Riverrun footer",
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Gold logo" },
+    { "type": "text", "id": "tagline", "label": "Tagline", "default": "Handpicked Chinese furniture" },
+    { "type": "textarea", "id": "address", "label": "Address", "default": "5 Maynard Street\nCape Town" },
+    { "type": "text", "id": "email", "label": "Email address", "info": "Supplied by the client." },
+    { "type": "text", "id": "website", "label": "Website", "default": "www.riverrun.co.za" },
+    { "type": "link_list", "id": "menu", "label": "Links", "info": "Instagram, Shipping, Terms.", "default": "footer" }
+  ],
+  "presets": [{ "name": "Riverrun footer" }]
+}
+{% endschema %}

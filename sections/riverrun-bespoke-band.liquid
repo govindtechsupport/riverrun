@@ -1,0 +1,136 @@
+{% comment %}
+  Section contract.
+  Full-width photo or looping video with a dark overlay, a gold line of text
+  ("Looking for something specific?") and a link to the bespoke page.
+  @example
+  <!-- templates/index.json: after the collection section -->
+{% endcomment %}
+
+<section class="rr-band" {{ section.shopify_attributes }}>
+  {%- if section.settings.video != blank -%}
+    <video
+      class="rr-band__media"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      aria-hidden="true"
+      tabindex="-1"
+      {% if section.settings.image != blank %}
+        poster="{{ section.settings.image | image_url: width: 1600 }}"
+      {% endif %}
+      data-rr-band-video
+    >
+      {%- for source in section.settings.video.sources -%}
+        <source src="{{ source.url }}" type="{{ source.mime_type }}">
+      {%- endfor -%}
+    </video>
+  {%- elsif section.settings.image != blank -%}
+    {{
+      section.settings.image
+      | image_url: width: 2000
+      | image_tag: alt: '', widths: '800, 1200, 1600, 2000', sizes: '100vw', loading: 'lazy', class: 'rr-band__media'
+    }}
+  {%- endif -%}
+
+  <p class="rr-band__text">{{ section.settings.text }}</p>
+  {%- if section.settings.link_label != blank -%}
+    <a class="rr-band__link" href="{{ section.settings.link | default: '#' }}">{{ section.settings.link_label }}</a>
+  {%- endif -%}
+</section>
+
+<script>
+  (() => {
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.querySelectorAll('[data-rr-band-video]').forEach((v) => {
+      v.removeAttribute('autoplay');
+      v.pause();
+    });
+  })();
+</script>
+
+{% stylesheet %}
+  .rr-band {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    min-height: 460px;
+    padding: 24px 16px;
+    overflow: hidden;
+    background: var(--rr-dark);
+    color: var(--rr-white);
+    text-align: center;
+  }
+
+  .rr-band::before {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: rgb(27 27 26 / 64%);
+    content: '';
+  }
+
+  .rr-band__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .rr-band__text,
+  .rr-band__link {
+    position: relative;
+    z-index: 2;
+  }
+
+  .rr-band__text {
+    margin: 0;
+    font-family: var(--rr-font-caps);
+    font-size: clamp(28px, 3.2vw, 46px);
+    letter-spacing: 0.16em;
+    text-wrap: balance;
+    color: var(--rr-yellow);
+  }
+
+  .rr-band__link {
+    padding-bottom: 3px;
+    border-bottom: 1px solid currentcolor;
+    font-family: var(--rr-font-body);
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--rr-white);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .rr-band__link:hover,
+  .rr-band__link:focus-visible {
+    color: var(--rr-red);
+  }
+
+  .rr-band__link:focus-visible {
+    outline: 2px solid var(--rr-white);
+    outline-offset: 6px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Riverrun bespoke band",
+  "settings": [
+    { "type": "video", "id": "video", "label": "Background video" },
+    { "type": "image_picker", "id": "image", "label": "Background photo", "info": "Used as the still frame when a video is set." },
+    { "type": "text", "id": "text", "label": "Text", "default": "Looking for something specific?" },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "Bespoke orders →" },
+    { "type": "url", "id": "link", "label": "Link" }
+  ],
+  "presets": [{ "name": "Riverrun bespoke band" }]
+}
+{% endschema %}

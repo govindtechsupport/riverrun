@@ -1,0 +1,276 @@
+{% comment %}
+  Section contract.
+  Riverrun opening screen: full screen, two looping muted videos side by side (stacked on
+  phones) with a slight dark overlay, the beige logo centred on the seam, the tagline under
+  it, and a pulsing "Scroll" cue. Both videos buffer first, then start together; they pause
+  when scrolled out of view and stay paused with reduced motion.
+  @example
+  <!-- templates/index.json: first section -->
+{% endcomment %}
+
+{%- liquid
+  assign left = section.settings.video_left
+  assign right = section.settings.video_right
+-%}
+
+<section class="rr-opening" id="rr-opening" data-rr-opening {{ section.shopify_attributes }}>
+  {%- assign sides = 'left,right' | split: ',' -%}
+  {%- for side in sides -%}
+    {%- liquid
+      if side == 'left'
+        assign video = left
+        assign poster = section.settings.poster_left
+      else
+        assign video = right
+        assign poster = section.settings.poster_right
+      endif
+    -%}
+    <div class="rr-opening__half">
+      {%- if video != blank -%}
+        <video
+          class="rr-opening__video"
+          muted
+          loop
+          playsinline
+          preload="auto"
+          aria-hidden="true"
+          tabindex="-1"
+          {% if poster != blank %}
+            poster="{{ poster | image_url: width: 1600 }}"
+          {% elsif video.preview_image != blank %}
+            poster="{{ video.preview_image | image_url: width: 1600 }}"
+          {% endif %}
+          data-rr-video
+        >
+          {%- for source in video.sources -%}
+            <source src="{{ source.url }}" type="{{ source.mime_type }}">
+          {%- endfor -%}
+        </video>
+      {%- elsif poster != blank -%}
+        {{ poster | image_url: width: 1600 | image_tag: alt: '', loading: 'eager', class: 'rr-opening__video' }}
+      {%- endif -%}
+      <div class="rr-opening__shade"></div>
+    </div>
+  {%- endfor -%}
+
+  <div class="rr-opening__logo" data-rr-opening-logo>
+    {%- if section.settings.logo != blank -%}
+      {{
+        section.settings.logo
+        | image_url: width: 1600
+        | image_tag: alt: shop.name, width: 820, loading: 'eager', fetchpriority: 'high', class: 'rr-opening__logo-img'
+      }}
+    {%- else -%}
+      <h1 class="rr-opening__logo-text">{{ shop.name }}</h1>
+    {%- endif -%}
+    {%- if section.settings.tagline != blank -%}
+      <p class="rr-opening__tagline">{{ section.settings.tagline }}</p>
+    {%- endif -%}
+  </div>
+
+  <a class="rr-opening__cue" href="{{ section.settings.cue_link | default: '#rr-tiles' }}">
+    {{- section.settings.cue_text -}}
+  </a>
+</section>
+
+<script src="{{ 'riverrun-opening.js' | asset_url }}" defer="defer"></script>
+
+{% stylesheet %}
+  .rr-opening {
+    --rr-fade: 4s;
+
+    position: relative;
+    display: flex;
+    height: 100vh;
+    height: 100svh;
+    min-height: 520px;
+    overflow: hidden;
+    background: var(--rr-dark);
+  }
+
+  .rr-opening__half {
+    position: relative;
+    flex: 1 1 50%;
+    overflow: hidden;
+    background: #222;
+  }
+
+  .rr-opening__half + .rr-opening__half {
+    box-shadow: -1px 0 0 rgb(255 255 255 / 14%);
+  }
+
+  .rr-opening__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.07);
+  }
+
+  .rr-opening__shade {
+    position: absolute;
+    inset: 0;
+    background: rgb(0 0 0 / 14%);
+    pointer-events: none;
+  }
+
+  .rr-opening__logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: clamp(280px, 46vw, 820px);
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .rr-opening[data-ready] .rr-opening__logo,
+  .rr-opening[data-ready] .rr-opening__cue {
+    animation: rr-fade var(--rr-fade) ease-in-out 0.2s both;
+  }
+
+  .rr-opening__logo-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 2px 24px rgb(0 0 0 / 35%));
+  }
+
+  .rr-opening__logo-text {
+    margin: 0;
+    font-family: var(--rr-font-caps);
+    font-size: clamp(32px, 6vw, 80px);
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--rr-beige);
+  }
+
+  .rr-opening__tagline {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    margin: clamp(14px, 1.8vw, 30px) 0 0;
+    font-family: var(--rr-font-caps);
+    font-size: clamp(10px, 1.1vw, 17px);
+    letter-spacing: 0.6em;
+    word-spacing: 0.5em;
+    text-indent: 0.6em;
+    text-align: center;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--rr-beige);
+    filter: drop-shadow(0 1px 14px rgb(0 0 0 / 50%));
+  }
+
+  .rr-opening__cue {
+    position: absolute;
+    right: 0;
+    bottom: 28px;
+    left: 0;
+    z-index: 3;
+    font-family: var(--rr-font-body);
+    font-size: 12px;
+    font-style: italic;
+    letter-spacing: 0.14em;
+    text-align: center;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--rr-white);
+    opacity: 0;
+  }
+
+  .rr-opening__cue::after {
+    display: block;
+    width: 1px;
+    height: 34px;
+    margin: 10px auto 0;
+    background: var(--rr-white);
+    transform-origin: top;
+    animation: rr-pulse 2s ease-in-out infinite;
+    content: '';
+  }
+
+  .rr-opening__cue:focus-visible {
+    outline: 2px solid var(--rr-white);
+    outline-offset: 6px;
+  }
+
+  @keyframes rr-fade {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes rr-pulse {
+    0%,
+    100% {
+      transform: scaleY(0.25);
+      opacity: 0.35;
+    }
+
+    50% {
+      transform: scaleY(1);
+      opacity: 0.95;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .rr-opening {
+      flex-direction: column;
+    }
+
+    .rr-opening__half + .rr-opening__half {
+      box-shadow: 0 -1px 0 rgb(255 255 255 / 14%);
+    }
+
+    .rr-opening__logo {
+      width: 72vw;
+    }
+
+    .rr-opening__tagline {
+      font-size: 9px;
+      letter-spacing: 0.38em;
+      word-spacing: 0.3em;
+      text-indent: 0.38em;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rr-opening[data-ready] .rr-opening__logo,
+    .rr-opening[data-ready] .rr-opening__cue {
+      animation: none;
+      opacity: 1;
+    }
+
+    .rr-opening__cue::after {
+      animation: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Riverrun opening",
+  "settings": [
+    { "type": "header", "content": "Videos" },
+    { "type": "video", "id": "video_left", "label": "Left video (kimono)" },
+    { "type": "image_picker", "id": "poster_left", "label": "Left still frame" },
+    { "type": "video", "id": "video_right", "label": "Right video (shoji screen)" },
+    { "type": "image_picker", "id": "poster_right", "label": "Right still frame" },
+    { "type": "header", "content": "Logo and text" },
+    { "type": "image_picker", "id": "logo", "label": "Beige logo" },
+    { "type": "text", "id": "tagline", "label": "Tagline", "default": "Handpicked Chinese furniture" },
+    { "type": "text", "id": "cue_text", "label": "Scroll cue", "default": "Scroll" },
+    { "type": "url", "id": "cue_link", "label": "Scroll cue link", "info": "Leave empty to scroll to the tiles." }
+  ],
+  "presets": [{ "name": "Riverrun opening" }]
+}
+{% endschema %}

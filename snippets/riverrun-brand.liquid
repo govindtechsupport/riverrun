@@ -1,0 +1,39 @@
+{% doc %}
+  Riverrun brand tokens: Google Fonts and colour variables from the build brief.
+  Rendered once in the layout head. Other Riverrun sections read these variables.
+
+  @example
+  {% render 'riverrun-brand' %}
+{% enddoc %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Italiana&family=Instrument+Serif&family=Lato:ital,wght@0,400;1,400&family=Noto+Serif+SC:wght@500&display=swap"
+>
+<style>
+  :root {
+    --rr-yellow: #e3bb43;
+    --rr-card: #f4eedd;
+    --rr-beige: #e3dac5;
+    --rr-ink: #1c1814;
+    --rr-dark: #1b1b1a;
+    --rr-light: #efebdd;
+    --rr-red: #e05a4e;
+    --rr-white: #ffffff;
+    --rr-font-caps: 'Italiana', serif;
+    --rr-font-serif: 'Instrument Serif', serif;
+    --rr-font-body: 'Lato', sans-serif;
+    --rr-font-cjk: 'Noto Serif SC', serif;
+    --rr-grid-width: 1182px;
+    --rr-gutter: 36px;
+    --rr-header-height: 84px;
+  }
+
+  @media (max-width: 760px) {
+    :root {
+      --rr-gutter: 16px;
+      --rr-header-height: 68px;
+    }
+  }
+</style>

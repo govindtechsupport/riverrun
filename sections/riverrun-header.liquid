@@ -1,0 +1,277 @@
+{% comment %}
+  Section contract.
+  Riverrun header: a fixed dark bar (84px, 94% opaque, blurred) with the gold logo on the
+  left and the main menu on the right. Its edges line up with the 1182px product grid.
+  On the home page it stays hidden until the opening logo has scrolled out of view
+  (a `#rr-opening` element is present); on every other page it is always visible.
+  The logo fades out when the footer logo (`[data-rr-footer-logo]`) comes into view.
+  @example
+  <!-- Lives in sections/header-group.json -->
+{% endcomment %}
+
+{%- liquid
+  assign menu = section.settings.menu
+-%}
+
+<rr-header class="rr-header" data-rr-header>
+  <div class="rr-header__bar">
+    <a class="rr-header__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}">
+      {%- if section.settings.logo != blank -%}
+        {{
+          section.settings.logo
+          | image_url: width: 400
+          | image_tag: alt: shop.name, width: 200, loading: 'eager', class: 'rr-header__logo-img'
+        }}
+      {%- else -%}
+        <span class="rr-header__logo-text">{{ shop.name }}</span>
+      {%- endif -%}
+    </a>
+
+    {%- if menu != blank -%}
+      <nav class="rr-header__nav" aria-label="{{ 'accessibility.menu' | t }}">
+        <ul class="rr-header__list">
+          {%- for link in menu.links -%}
+            <li>
+              <a
+                class="rr-header__link"
+                href="{{ link.url }}"
+                {% if link.current %}
+                  aria-current="page"
+                {% endif %}
+              >
+                {{- link.title -}}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+
+      <button
+        class="rr-header__toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="rr-mobile-menu-{{ section.id }}"
+        data-rr-toggle
+      >
+        <span class="rr-header__toggle-label">{{ 'accessibility.menu' | t }}</span>
+        <span class="rr-header__toggle-bars" aria-hidden="true"></span>
+      </button>
+    {%- endif -%}
+  </div>
+
+  {%- if menu != blank -%}
+    <nav class="rr-header__mobile" id="rr-mobile-menu-{{ section.id }}" aria-label="{{ 'accessibility.menu' | t }}" hidden>
+      <ul>
+        {%- for link in menu.links -%}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+  {%- endif -%}
+</rr-header>
+
+<script src="{{ 'riverrun-header.js' | asset_url }}" defer="defer"></script>
+
+{% stylesheet %}
+  .rr-header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 20;
+    color: var(--rr-white);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+  }
+
+  .rr-header[data-visible] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .rr-header__bar {
+    display: flex;
+    align-items: center;
+    height: var(--rr-header-height);
+    padding-inline: max(var(--rr-gutter), calc((100% - var(--rr-grid-width)) / 2));
+    background: rgb(27 27 26 / 94%);
+    backdrop-filter: blur(8px);
+  }
+
+  .rr-header__logo {
+    display: block;
+    line-height: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .rr-header[data-on-footer] .rr-header__logo {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .rr-header__logo-img {
+    display: block;
+    width: auto;
+    height: 34px;
+  }
+
+  .rr-header__logo-text {
+    font-family: var(--rr-font-caps);
+    color: var(--rr-yellow);
+    font-size: 1.25rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .rr-header__nav {
+    margin-inline-start: auto;
+  }
+
+  .rr-header__list {
+    display: flex;
+    gap: clamp(44px, 6vw, 104px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .rr-header__link {
+    font-family: var(--rr-font-serif);
+    font-size: 17px;
+    letter-spacing: 0.09em;
+    color: var(--rr-white);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .rr-header__link:hover,
+  .rr-header__link:focus-visible,
+  .rr-header__link[aria-current='page'] {
+    color: var(--rr-red);
+  }
+
+  .rr-header__link:focus-visible,
+  .rr-header__toggle:focus-visible,
+  .rr-header__mobile a:focus-visible {
+    outline: 2px solid var(--rr-light);
+    outline-offset: 4px;
+  }
+
+  .rr-header__toggle {
+    display: none;
+    margin-inline-start: auto;
+    padding: 12px 4px;
+    background: none;
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .rr-header__toggle-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .rr-header__toggle-bars,
+  .rr-header__toggle-bars::before {
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--rr-light);
+    content: '';
+    transition: transform 0.3s ease;
+  }
+
+  .rr-header__toggle-bars::before {
+    transform: translateY(-7px);
+  }
+
+  .rr-header__toggle-bars {
+    box-shadow: 0 7px 0 var(--rr-light);
+  }
+
+  .rr-header__toggle[aria-expanded='true'] .rr-header__toggle-bars {
+    box-shadow: none;
+    transform: rotate(45deg);
+  }
+
+  .rr-header__toggle[aria-expanded='true'] .rr-header__toggle-bars::before {
+    transform: rotate(-90deg);
+  }
+
+  .rr-header__mobile {
+    display: none;
+  }
+
+  @media (max-width: 760px) {
+    .rr-header__nav {
+      display: none;
+    }
+
+    .rr-header__toggle {
+      display: block;
+    }
+
+    .rr-header__logo-img {
+      height: 28px;
+    }
+
+    .rr-header__mobile:not([hidden]) {
+      display: block;
+      padding: 12px var(--rr-gutter) 28px;
+      background: rgb(27 27 26 / 97%);
+    }
+
+    .rr-header__mobile ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .rr-header__mobile a {
+      display: block;
+      padding: 14px 0;
+      border-bottom: 1px solid rgb(239 235 221 / 15%);
+      font-family: var(--rr-font-serif);
+      font-size: 22px;
+      letter-spacing: 0.09em;
+      color: var(--rr-light);
+      text-decoration: none;
+    }
+
+    .rr-header__mobile a:hover {
+      color: var(--rr-red);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rr-header,
+    .rr-header__logo,
+    .rr-header__toggle-bars,
+    .rr-header__toggle-bars::before {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Riverrun header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Gold logo"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    }
+  ]
+}
+{% endschema %}
