@@ -36,4 +36,23 @@
       --rr-header-height: 68px;
     }
   }
+
+  {%- if settings.riverrun_brand_fonts -%}
+    /* Brand fonts site-wide. Italiana is not in Shopify's font picker, so the theme font
+       variables are set here (theme setting: Typography > Use the Riverrun brand fonts). */
+    :root {
+      --font-body--family: 'Lato', sans-serif;
+      --font-body--style: normal;
+      --font-body--weight: 400;
+      --font-subheading--family: 'Lato', sans-serif;
+      --font-subheading--style: normal;
+      --font-subheading--weight: 400;
+      --font-heading--family: 'Instrument Serif', serif;
+      --font-heading--style: normal;
+      --font-heading--weight: 400;
+      --font-accent--family: 'Italiana', serif;
+      --font-accent--style: normal;
+      --font-accent--weight: 400;
+    }
+  {%- endif -%}
 </style>

@@ -116,6 +116,13 @@
         "label": "t:options.accent"
       },
       {
+        "type": "checkbox",
+        "id": "riverrun_brand_fonts",
+        "label": "Use the Riverrun brand fonts on the whole site",
+        "info": "Italiana (accent), Instrument Serif (headings) and Lato (body and subheadings) are loaded from Google Fonts. Italiana is not in Shopify's font list, so it cannot be chosen above. Turn this off to use the fonts picked above.",
+        "default": true
+      },
+      {
         "type": "header",
         "content": "t:content.text_presets"
       },
