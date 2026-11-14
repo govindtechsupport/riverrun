@@ -1,0 +1,45 @@
+{% doc %}
+  Enquiry call to action shown on the product page instead of the buy buttons for pieces
+  tagged "enquire". Links to the enquiry page with the piece name, which the enquiry form
+  uses to pre-fill the message.
+
+  @param {product} product - The piece being enquired about.
+
+  @example
+  {% render 'riverrun-enquire-button', product: product %}
+{% enddoc %}
+
+{%- liquid
+  assign enquire_page = settings.riverrun_enquire_url | default: '/pages/contact'
+  assign enquire_label = settings.riverrun_enquire_label | default: 'enquire'
+-%}
+
+<a class="rr-enquire" href="{{ enquire_page }}?piece={{ product.title | url_encode }}">
+  {{- enquire_label }} &rarr;
+</a>
+
+{% stylesheet %}
+  .rr-enquire {
+    display: inline-block;
+    padding: 15px 28px;
+    background: var(--rr-ink);
+    color: var(--rr-card);
+    font-family: var(--rr-font-body);
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background 0.3s ease;
+  }
+
+  .rr-enquire:hover,
+  .rr-enquire:focus-visible {
+    background: var(--rr-red);
+  }
+
+  .rr-enquire:focus-visible {
+    outline: 2px solid var(--rr-ink);
+    outline-offset: 3px;
+  }
+{% endstylesheet %}

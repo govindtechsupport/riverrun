@@ -123,6 +123,19 @@
         "default": true
       },
       {
+        "type": "text",
+        "id": "riverrun_enquire_label",
+        "label": "Label for pieces without a price",
+        "info": "Shown instead of the price on products tagged \"enquire\".",
+        "default": "enquire"
+      },
+      {
+        "type": "url",
+        "id": "riverrun_enquire_url",
+        "label": "Enquiry page",
+        "info": "The Enquire button on product pages goes here. Leave empty to use /pages/contact."
+      },
+      {
         "type": "header",
         "content": "t:content.text_presets"
       },

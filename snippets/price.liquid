@@ -9,6 +9,11 @@
 
 {% render 'price-styles' %}
 
+{%- comment -%} Riverrun: pieces tagged "enquire" show an enquiry label instead of a price. {%- endcomment -%}
+{%- if product_resource.tags contains 'enquire' -%}
+  <div class="price">{{ settings.riverrun_enquire_label | default: 'enquire' }}</div>
+{%- else -%}
+
 {%- liquid
   assign show_unit_price = show_unit_price | default: false
   assign show_sale_price_first = show_sale_price_first | default: false
@@ -133,4 +138,5 @@
   >
     {{- 'content.volume_pricing_available' | t -}}
   </small>
+{%- endif -%}
 {%- endif -%}

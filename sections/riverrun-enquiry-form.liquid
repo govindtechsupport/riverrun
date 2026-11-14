@@ -68,13 +68,33 @@
           <textarea id="{{ form_id }}-message" name="contact[body]" rows="6" required>{{ form.body }}</textarea>
         </label>
 
-        <input type="hidden" name="contact[subject]" value="{{ section.settings.subject | escape }}">
+        <input
+          type="hidden"
+          name="contact[subject]"
+          value="{{ section.settings.subject | escape }}"
+          data-rr-subject
+          data-default="{{ section.settings.subject | escape }}"
+        >
 
         <button class="rr-enquiry__submit" type="submit">{{ section.settings.button_label }}</button>
       {%- endform -%}
     </div>
   </div>
 </section>
+
+<script>
+  // "Enquire" buttons link here with ?piece=No.+8001: pre-fill the subject and message.
+  (() => {
+    const piece = new URLSearchParams(window.location.search).get('piece');
+    if (!piece) return;
+    const form = document.getElementById({{ form_id | json }});
+    if (!form) return;
+    const subject = form.querySelector('[data-rr-subject]');
+    const message = form.querySelector('textarea');
+    if (subject) subject.value = `${subject.dataset.default}: ${piece}`.slice(0, 150);
+    if (message && !message.value) message.value = `I would like to enquire about ${piece}.`;
+  })();
+</script>
 
 {% stylesheet %}
   .rr-enquiry {

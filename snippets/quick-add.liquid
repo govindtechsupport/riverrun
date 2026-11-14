@@ -6,6 +6,9 @@
   @param {object} [block] - The block object
 {%- enddoc -%}
 
+{%- comment -%} Riverrun: no quick add for pieces tagged "enquire". {%- endcomment -%}
+{%- unless product.tags contains 'enquire' -%}
+
 {% liquid
   assign product_form_id = 'QuickAdd-ProductForm-' | append: product.id | append: '-' | append: block.id
   assign add_to_cart_text = 'actions.add' | t
@@ -156,3 +159,4 @@
 {% render 'video-background-styles' %}
 {% render 'video-placeholder-styles' %}
 {% render 'deferred-media-product-model-styles' %}
+{%- endunless -%}

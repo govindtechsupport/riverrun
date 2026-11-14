@@ -1,3 +1,6 @@
-﻿# Claude temporary files (backups, scratch output)
+# Claude temporary files (backups, scratch output)
 .claude-tmp/
 .claude/
+
+# Client handover folder (large media, not part of the theme)
+6 Riverrun – website handover/

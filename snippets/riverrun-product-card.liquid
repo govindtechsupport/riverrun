@@ -30,7 +30,9 @@
     }}
   {%- endif -%}
   <span class="rr-card__price">
-    {%- if product.available -%}
+    {%- if product.tags contains 'enquire' -%}
+      {{ settings.riverrun_enquire_label | default: 'enquire' }}
+    {%- elsif product.available -%}
       {{ product.price | money_without_trailing_zeros }}
     {%- else -%}
       {{ 'products.product.sold_out' | t }}

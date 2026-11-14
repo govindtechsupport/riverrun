@@ -43,7 +43,9 @@
   {% endif %}
   {{ block.shopify_attributes }}
 >
-  {%- if product != blank -%}
+  {%- if product != blank and product.tags contains 'enquire' -%}
+    {% render 'riverrun-enquire-button', product: product %}
+  {%- elsif product != blank -%}
     {%- assign product_form_id = 'BuyButtons-ProductForm-' | append: section.id -%}
     <product-form-component
       data-section-id="{{ section.id }}"
