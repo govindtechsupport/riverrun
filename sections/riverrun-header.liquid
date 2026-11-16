@@ -147,13 +147,22 @@
     letter-spacing: 0.09em;
     color: var(--rr-white);
     text-decoration: none;
-    transition: color 0.3s ease;
+    padding-block-end: 3px;
+    border-block-end: 1px solid transparent;
+    transition:
+      color 0.3s ease,
+      border-color 0.3s ease;
   }
 
   .rr-header__link:hover,
-  .rr-header__link:focus-visible,
-  .rr-header__link[aria-current='page'] {
+  .rr-header__link:focus-visible {
     color: var(--rr-red);
+    border-block-end-color: var(--rr-yellow);
+  }
+
+  .rr-header__link[aria-current='page'] {
+    color: var(--rr-white);
+    border-block-end-color: var(--rr-yellow);
   }
 
   .rr-header__link:focus-visible,

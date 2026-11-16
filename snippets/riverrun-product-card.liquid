@@ -18,16 +18,18 @@
 <a class="rr-card" href="{{ product.url }}" data-rr-card>
   <span class="rr-card__name">{{ product.title | escape }}</span>
   {%- if image != blank -%}
-    {{
-      image
-      | image_url: width: 900
-      | image_tag:
-        alt: image.alt | default: product.title,
-        widths: '300, 450, 600, 900',
-        sizes: '(max-width: 760px) 45vw, 280px',
-        loading: card_loading,
-        class: 'rr-card__pic'
-    }}
+    <span class="rr-card__stage">
+      {{
+        image
+        | image_url: width: 900
+        | image_tag:
+          alt: image.alt | default: product.title,
+          widths: '300, 450, 600, 900',
+          sizes: '(max-width: 760px) 45vw, 280px',
+          loading: card_loading,
+          class: 'rr-card__pic'
+      }}
+    </span>
   {%- endif -%}
   <span class="rr-card__price">
     {%- if product.tags contains 'enquire' -%}
@@ -65,23 +67,32 @@
     text-transform: uppercase;
   }
 
-  .rr-card__pic {
+  /* The photos are 3:2 canvases with transparent padding, so the picture is drawn wider than
+     the card (the card clips it) to make the piece itself about 70% of the card width.
+     It rests near the bottom, under the name. */
+  .rr-card__stage {
     position: absolute;
-    bottom: 12%;
-    left: 50%;
-    width: auto;
+    right: 0;
+    bottom: 14%;
+    left: 0;
+    display: block;
+    pointer-events: none;
+  }
+
+  .rr-card__pic {
+    display: block;
+    width: 122%;
+    max-width: none;
     height: auto;
-    max-width: 70%;
-    max-height: 40%;
-    object-fit: contain;
+    margin-inline: -11%;
     filter: drop-shadow(0 12px 12px rgb(40 30 15 / 14%));
-    transform: translateX(-50%);
-    transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transform-origin: 50% 82%;
+    transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
   .rr-card:hover .rr-card__pic,
   .rr-card:focus-visible .rr-card__pic {
-    transform: translateX(-50%) scale(1.04);
+    transform: scale(1.12);
   }
 
   .rr-card__price {

@@ -4,6 +4,7 @@
   uses to pre-fill the message.
 
   @param {product} product - The piece being enquired about.
+  @param {string} [label] - Button text. Defaults to the theme's enquire label followed by an arrow.
 
   @example
   {% render 'riverrun-enquire-button', product: product %}
@@ -15,7 +16,11 @@
 -%}
 
 <a class="rr-enquire" href="{{ enquire_page }}?piece={{ product.title | url_encode }}">
-  {{- enquire_label }} &rarr;
+  {%- if label != blank -%}
+    {{- label | escape -}}
+  {%- else -%}
+    {{- enquire_label }} &rarr;
+  {%- endif -%}
 </a>
 
 {% stylesheet %}

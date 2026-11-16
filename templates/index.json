@@ -14,7 +14,7 @@
     },
     "collection": { "type": "riverrun-collection", "settings": {} },
     "bespoke_band": { "type": "riverrun-bespoke-band", "settings": { "link": "/pages/bespoke" } },
-    "showroom": { "type": "riverrun-showroom", "settings": {} }
+    "showroom": { "type": "riverrun-showroom", "settings": { "email": "hello@riverrun.co.za" } }
   },
   "order": ["opening", "tiles", "collection", "bespoke_band", "showroom"]
 }

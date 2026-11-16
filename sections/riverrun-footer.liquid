@@ -1,7 +1,7 @@
 {% comment %}
   Section contract.
   Riverrun footer: dark background, small gold logo with the tagline lockup underneath,
-  address, email and web address, and a link list (Instagram, Shipping, Terms).
+  address, email and web address, and links (Instagram, Shipping, Terms) plus an optional extra menu.
   The logo carries `data-rr-footer-logo` so the header logo can fade out when it appears.
   @example
   <!-- Lives in sections/footer-group.json -->
@@ -44,6 +44,9 @@
   </div>
 
   <div class="rr-footer__col">
+    <a href="{{ section.settings.instagram_url | default: 'https://www.instagram.com/' }}" target="_blank" rel="noopener">{{ section.settings.instagram_label }}</a><br>
+    <a href="{{ section.settings.shipping_url | default: '/policies/shipping-policy' }}">{{ section.settings.shipping_label }}</a><br>
+    <a href="{{ section.settings.terms_url | default: '/policies/terms-of-service' }}">{{ section.settings.terms_label }}</a><br>
     {%- if section.settings.menu != blank -%}
       {%- for link in section.settings.menu.links -%}
         <a href="{{ link.url }}">{{ link.title }}</a><br>
@@ -148,9 +151,16 @@
     { "type": "image_picker", "id": "logo", "label": "Gold logo" },
     { "type": "text", "id": "tagline", "label": "Tagline", "default": "Handpicked Chinese furniture" },
     { "type": "textarea", "id": "address", "label": "Address", "default": "5 Maynard Street\nCape Town" },
-    { "type": "text", "id": "email", "label": "Email address", "info": "Supplied by the client." },
+    { "type": "text", "id": "email", "label": "Email address", "info": "hello@riverrun.co.za is still to be confirmed by the client.", "default": "hello@riverrun.co.za" },
     { "type": "text", "id": "website", "label": "Website", "default": "www.riverrun.co.za" },
-    { "type": "link_list", "id": "menu", "label": "Links", "info": "Instagram, Shipping, Terms.", "default": "footer" }
+    { "type": "header", "content": "Links" },
+    { "type": "text", "id": "instagram_label", "label": "Instagram label", "default": "Instagram" },
+    { "type": "url", "id": "instagram_url", "label": "Instagram link", "info": "The Instagram handle is still to be supplied by the client. Until it is set, the link goes to instagram.com." },
+    { "type": "text", "id": "shipping_label", "label": "Shipping label", "default": "Shipping" },
+    { "type": "url", "id": "shipping_url", "label": "Shipping link" },
+    { "type": "text", "id": "terms_label", "label": "Terms label", "default": "Terms" },
+    { "type": "url", "id": "terms_url", "label": "Terms link" },
+    { "type": "link_list", "id": "menu", "label": "Extra links", "info": "Optional. Shown after the links above." }
   ],
   "presets": [{ "name": "Riverrun footer" }]
 }

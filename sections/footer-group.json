@@ -2,7 +2,14 @@
   "type": "footer",
   "name": "t:names.footer",
   "sections": {
-    "riverrun_footer": { "type": "riverrun-footer", "settings": { "menu": "footer" } }
+    "riverrun_footer": {
+      "type": "riverrun-footer",
+      "settings": {
+        "email": "hello@riverrun.co.za",
+        "shipping_url": "/policies/shipping-policy",
+        "terms_url": "/policies/terms-of-service"
+      }
+    }
   },
   "order": ["riverrun_footer"]
 }

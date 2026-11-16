@@ -1,0 +1,755 @@
+{% comment %}
+  Section contract.
+  Riverrun product page (the "Gallery + details" layout): beige gallery frame with
+  thumbnails on the left; name, price, reference, buy or enquire button and open/close
+  information sections on the right; related pieces below. Pieces tagged "enquire" show
+  an enquire button instead of the buy form.
+  @example
+  <!-- templates/product.json: section "main" -->
+{% endcomment %}
+
+{%- liquid
+  assign current_product = product
+  assign is_enquiry = false
+  if current_product.tags contains 'enquire'
+    assign is_enquiry = true
+  endif
+
+  assign crumb_collection = collection
+  if crumb_collection == blank
+    assign crumb_collection = current_product.collections.first
+  endif
+
+  assign media_images = current_product.media | where: 'media_type', 'image'
+  assign image_count = media_images.size
+  assign selected_variant = current_product.selected_or_first_available_variant
+
+  # Enquiry pieces still show price, options and add to cart when the merchant setting is on.
+  assign show_buy = true
+  if is_enquiry and section.settings.show_purchase_on_enquiry == false
+    assign show_buy = false
+  endif
+  assign show_price = show_buy
+  if selected_variant.price == 0
+    assign show_price = false
+  endif
+-%}
+
+<section class="rr-pd" {{ section.shopify_attributes }}>
+  <div class="rr-pd__wrap">
+    <nav class="rr-pd__crumb" aria-label="{{ section.settings.shop_label | escape }}">
+      <a href="{{ routes.collections_url }}/all">{{ section.settings.shop_label }}</a>
+      {%- if crumb_collection != blank -%}
+        <span aria-hidden="true">/</span>
+        <a href="{{ crumb_collection.url }}">{{ crumb_collection.title }}</a>
+      {%- endif -%}
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{{ current_product.title }}</span>
+    </nav>
+
+    <div class="rr-pd__grid">
+      <div class="rr-pd__media">
+        <div
+          class="rr-pd__main"
+          {% if image_count > 1 %}
+            role="button"
+            tabindex="0"
+            aria-label="{{ section.settings.next_label | escape }}"
+          {% endif %}
+        >
+          {%- for image in media_images limit: 8 -%}
+            {%- liquid
+              assign img_loading = 'eager'
+              assign img_priority = 'auto'
+              if forloop.first
+                assign img_priority = 'high'
+              endif
+            -%}
+            {{
+              image
+              | image_url: width: 1800
+              | image_tag:
+                alt: image.alt | default: current_product.title,
+                widths: '600, 900, 1200, 1800',
+                sizes: '(min-width: 1000px) 62vw, 100vw',
+                loading: img_loading,
+                fetchpriority: img_priority,
+                class: 'rr-pd__img'
+            }}
+          {%- endfor -%}
+        </div>
+
+        {%- if image_count > 1 -%}
+          <ul class="rr-pd__thumbs" role="list">
+            {%- for image in media_images limit: 8 -%}
+              <li>
+                <button
+                  class="rr-pd__thumb"
+                  type="button"
+                  data-index="{{ forloop.index0 }}"
+                  aria-label="{{ section.settings.view_label | escape }} {{ forloop.index }}"
+                  aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+                >
+                  {{ image | image_url: width: 400 | image_tag: alt: '', widths: '200, 400', sizes: '(min-width: 1000px) 15vw, 24vw', loading: 'lazy', class: 'rr-pd__thumb-img' }}
+                </button>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      </div>
+
+      <div class="rr-pd__side">
+        {%- if crumb_collection != blank -%}
+          <p class="rr-pd__label">{{ crumb_collection.title }}</p>
+        {%- endif -%}
+        <h1 class="rr-pd__title">{{ current_product.title | escape }}</h1>
+
+        <p class="rr-pd__price">
+          {%- if show_price -%}
+            {{ selected_variant.price | money_without_trailing_zeros }}
+            <span class="rr-pd__currency">{{ cart.currency.iso_code }}</span>
+          {%- elsif is_enquiry -%}
+            {{ settings.riverrun_enquire_label | default: 'enquire' }}
+          {%- else -%}
+            {{ 'products.product.sold_out' | t }}
+          {%- endif -%}
+        </p>
+
+        {%- if selected_variant.sku != blank -%}
+          <p class="rr-pd__meta">{{ section.settings.reference_label }} {{ selected_variant.sku | replace: 'FRA_', 'No. ' }}</p>
+        {%- endif -%}
+
+        <div class="rr-pd__buy{% if show_buy and is_enquiry %} rr-pd__buy--both{% endif %}">
+          {%- if show_buy -%}
+            {%- form 'product', current_product, class: 'rr-pd__form' -%}
+              {%- if current_product.has_only_default_variant == false -%}
+                <label class="rr-pd__variant" for="rr-variant-{{ section.id }}">
+                  <span>{{ current_product.options | join: ' / ' | escape }}</span>
+                  <select id="rr-variant-{{ section.id }}" name="id">
+                    {%- for variant in current_product.variants -%}
+                      <option
+                        value="{{ variant.id }}"
+                        {% if variant == selected_variant %}
+                          selected
+                        {% endif %}
+                        {% unless variant.available %}
+                          disabled
+                        {% endunless %}
+                      >
+                        {{- variant.title | escape }} - {{ variant.price | money_without_trailing_zeros -}}
+                      </option>
+                    {%- endfor -%}
+                  </select>
+                </label>
+              {%- else -%}
+                <input type="hidden" name="id" value="{{ selected_variant.id }}">
+              {%- endif -%}
+              <button class="rr-pd__btn" type="submit" {% unless current_product.available %}disabled{% endunless %}>
+                {%- if current_product.available -%}
+                  {{ 'products.product.add_to_cart' | t }}
+                {%- else -%}
+                  {{ 'products.product.sold_out' | t }}
+                {%- endif -%}
+              </button>
+            {%- endform -%}
+          {%- endif -%}
+          {%- if is_enquiry -%}
+            {% render 'riverrun-enquire-button', product: current_product, label: section.settings.enquire_button_label %}
+          {%- endif -%}
+        </div>
+
+        <div class="rr-pd__acc">
+          {%- if current_product.description != blank -%}
+            <details open>
+              <summary>{{ section.settings.about_heading }}</summary>
+              <div class="rr-pd__text">{{ current_product.description }}</div>
+            </details>
+          {%- endif -%}
+          <details {% if current_product.description == blank %}open{% endif %}>
+            <summary>{{ section.settings.details_heading }}</summary>
+            <dl class="rr-pd__specs">
+              <div>
+                <dt>{{ section.settings.size_label }}</dt>
+                <dd>{{ current_product.metafields.custom.size.value | default: '–' | escape }}</dd>
+              </div>
+              <div>
+                <dt>{{ section.settings.wood_label }}</dt>
+                <dd>{{ current_product.metafields.custom.wood.value | default: '–' | escape }}</dd>
+              </div>
+              <div>
+                <dt>{{ section.settings.reference_label }}</dt>
+                <dd>{{ selected_variant.sku | replace: 'FRA_', 'No. ' | default: '–' }}</dd>
+              </div>
+            </dl>
+          </details>
+          {%- if section.settings.shipping_text != blank -%}
+            <details>
+              <summary>{{ section.settings.shipping_heading }}</summary>
+              <div class="rr-pd__text">{{ section.settings.shipping_text }}</div>
+            </details>
+          {%- endif -%}
+          {%- if section.settings.care_text != blank -%}
+            <details>
+              <summary>{{ section.settings.care_heading }}</summary>
+              <div class="rr-pd__text">{{ section.settings.care_text }}</div>
+            </details>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {%- liquid
+    assign related = crumb_collection.products
+    if related == blank or related.size < 2
+      assign related = collections['all'].products
+    endif
+  -%}
+  {%- if related != blank and related.size > 1 -%}
+    <div class="rr-pd__related">
+      <div class="rr-pd__wrap">
+        <h2 class="rr-pd__related-title">{{ section.settings.related_heading }}</h2>
+        <div class="rr-pd__cards">
+          {%- assign shown = 0 -%}
+          {%- for item in related -%}
+            {%- if item.id != current_product.id and shown < 4 -%}
+              {% render 'riverrun-product-card', product: item %}
+              {%- assign shown = shown | plus: 1 -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+</section>
+
+<script src="{{ 'riverrun-product.js' | asset_url }}" defer="defer"></script>
+
+{% stylesheet %}
+  .rr-pd {
+    background: var(--rr-yellow);
+    color: var(--rr-ink);
+    padding-block-start: calc(var(--rr-header-height) + 36px);
+  }
+
+  .rr-pd__media {
+    display: block;
+    min-width: 0;
+  }
+
+  .rr-pd__wrap {
+    width: min(var(--rr-grid-width), calc(100% - 2 * var(--rr-gutter)));
+    margin-inline: auto;
+  }
+
+  .rr-pd__crumb {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+    margin-block-end: 18px;
+    font-family: var(--rr-font-body);
+    font-size: 12px;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.75;
+  }
+
+  .rr-pd__crumb a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .rr-pd__crumb a:hover {
+    opacity: 0.6;
+  }
+
+  .rr-pd__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 64px;
+    align-items: start;
+  }
+
+  .rr-pd__main[role='button'] {
+    cursor: pointer;
+  }
+
+  .rr-pd__main {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    max-height: max(360px, calc(100vh - 310px));
+    background: var(--rr-card);
+  }
+
+  .rr-pd__media {
+    display: block;
+    min-width: 0;
+  }
+
+  .rr-pd__wrap {
+    width: min(var(--rr-grid-width), calc(100% - 2 * var(--rr-gutter)));
+    margin-inline: auto;
+  }
+
+  .rr-pd__crumb {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+    margin-block-end: 18px;
+    font-family: var(--rr-font-body);
+    font-size: 12px;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.75;
+  }
+
+  .rr-pd__crumb a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .rr-pd__crumb a:hover {
+    opacity: 0.6;
+  }
+
+  .rr-pd__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 64px;
+    align-items: start;
+  }
+
+  .rr-pd__main {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    max-height: max(360px, calc(100vh - 310px));
+    background: var(--rr-card);
+  }
+
+  .rr-pd__media {
+    position: relative;
+  }
+
+  /* The photos are padded 3:2 canvases: draw them wider than the frame so the piece fills it. */
+  .rr-pd__img {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    width: 120%;
+    max-width: none;
+    height: auto;
+    filter: drop-shadow(0 14px 12px rgb(40 30 15 / 16%));
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  .rr-pd__img:first-child {
+    opacity: 1;
+  }
+
+  .rr-pd__thumbs {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin: 18px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .rr-pd__thumb {
+    position: relative;
+    overflow: hidden;
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    padding: 0;
+    border: 0;
+    background: var(--rr-card);
+    cursor: pointer;
+  }
+
+  .rr-pd__thumb-img {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    width: 130%;
+    max-width: none;
+    height: auto;
+    opacity: 0.55;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s ease;
+  }
+
+  .rr-pd__thumb:hover .rr-pd__thumb-img {
+    opacity: 1;
+  }
+
+  /* No-JavaScript path: the main photo follows the thumbnail that is hovered or focused
+     (a click focuses the button), so the gallery still switches if the click script does not run. */
+  .rr-pd__media:has(.rr-pd__thumb:is(:hover, :focus)) .rr-pd__img {
+    opacity: 0 !important;
+  }
+
+  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(1) .rr-pd__thumb:is(:hover, :focus)) .rr-pd__img:nth-child(1) {
+    opacity: 1 !important;
+  }
+
+  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(2) .rr-pd__thumb:is(:hover, :focus)) .rr-pd__img:nth-child(2) {
+    opacity: 1 !important;
+  }
+
+  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(3) .rr-pd__thumb:is(:hover, :focus)) .rr-pd__img:nth-child(3) {
+    opacity: 1 !important;
+  }
+
+  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(4) .rr-pd__thumb:is(:hover, :focus)) .rr-pd__img:nth-child(4) {
+    opacity: 1 !important;
+  }
+
+  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(5) .rr-pd__thumb:is(:hover, :focus)) .rr-pd__img:nth-child(5) {
+    opacity: 1 !important;
+  }
+
+  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(6) .rr-pd__thumb:is(:hover, :focus)) .rr-pd__img:nth-child(6) {
+    opacity: 1 !important;
+  }
+
+  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(7) .rr-pd__thumb:is(:hover, :focus)) .rr-pd__img:nth-child(7) {
+    opacity: 1 !important;
+  }
+
+  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(8) .rr-pd__thumb:is(:hover, :focus)) .rr-pd__img:nth-child(8) {
+    opacity: 1 !important;
+  }
+
+  .rr-pd__thumb[aria-pressed='true'] {
+    box-shadow: inset 0 0 0 1px var(--rr-ink);
+  }
+
+  .rr-pd__thumb[aria-pressed='true'] .rr-pd__thumb-img {
+    opacity: 1;
+  }
+
+  .rr-pd__thumb:focus-visible {
+    outline: 2px solid var(--rr-ink);
+    outline-offset: 3px;
+  }
+
+  .rr-pd__side {
+    position: sticky;
+    inset-block-start: calc(var(--rr-header-height) + 36px);
+    min-width: 0;
+  }
+
+  .rr-pd__label {
+    margin: 0;
+    font-family: var(--rr-font-caps);
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .rr-pd__title {
+    margin: 18px 0;
+    font-family: var(--rr-font-serif);
+    font-size: clamp(44px, 4.4vw, 60px);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    overflow-wrap: anywhere;
+  }
+
+  .rr-pd__price {
+    margin: 0 0 9px;
+    font-family: var(--rr-font-serif);
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  .rr-pd__currency {
+    margin-inline-start: 6px;
+    font-family: var(--rr-font-body);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+
+  .rr-pd__buy--both .rr-enquire {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    margin-block-start: 12px;
+    background: transparent;
+    box-shadow: inset 0 0 0 1px currentcolor;
+    color: var(--rr-ink);
+    text-align: center;
+  }
+
+  .rr-pd__buy--both .rr-enquire:hover,
+  .rr-pd__buy--both .rr-enquire:focus-visible {
+    background: var(--rr-ink);
+    color: var(--rr-card);
+  }
+
+  .rr-pd__meta {
+    margin: 0 0 36px;
+    font-family: var(--rr-font-body);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+  }
+
+  .rr-pd__buy .rr-enquire,
+  .rr-pd__btn {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px 28px;
+    border: 0;
+    background: var(--rr-ink);
+    color: var(--rr-card);
+    font-family: var(--rr-font-body);
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    text-align: center;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .rr-pd__btn:hover,
+  .rr-pd__btn:focus-visible {
+    background: var(--rr-red);
+  }
+
+  .rr-pd__btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .rr-pd__btn:focus-visible {
+    outline: 2px solid var(--rr-ink);
+    outline-offset: 3px;
+  }
+
+  .rr-pd__variant {
+    display: grid;
+    gap: 8px;
+    margin-block-end: 14px;
+    font-family: var(--rr-font-body);
+    font-size: 12px;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .rr-pd__variant select {
+    padding: 12px 14px;
+    border: 1px solid rgb(28 24 20 / 35%);
+    border-radius: 0;
+    background: var(--rr-card);
+    font: inherit;
+    font-style: normal;
+    color: var(--rr-ink);
+  }
+
+  .rr-pd__acc {
+    margin-block-start: 36px;
+  }
+
+  .rr-pd__acc details {
+    border-block-start: 1px solid var(--rr-ink);
+  }
+
+  .rr-pd__acc details:last-child {
+    border-block-end: 1px solid var(--rr-ink);
+  }
+
+  .rr-pd__acc summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 16px;
+    font-family: var(--rr-font-caps);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .rr-pd__acc summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .rr-pd__acc summary::after {
+    content: '+';
+    font-family: var(--rr-font-body);
+    font-size: 16px;
+    letter-spacing: 0;
+  }
+
+  .rr-pd__acc details[open] summary::after {
+    content: '\2013';
+  }
+
+  .rr-pd__acc summary:focus-visible {
+    outline: 2px solid var(--rr-ink);
+    outline-offset: 2px;
+  }
+
+  .rr-pd__text {
+    max-width: 46ch;
+    margin-block-end: 18px;
+    font-family: var(--rr-font-body);
+    font-size: 14px;
+    line-height: 1.75;
+  }
+
+  .rr-pd__text > :first-child {
+    margin-block-start: 0;
+  }
+
+  .rr-pd__text > :last-child {
+    margin-block-end: 0;
+  }
+
+  .rr-pd__specs {
+    margin: 0 0 18px;
+    font-family: var(--rr-font-body);
+    font-size: 13px;
+  }
+
+  .rr-pd__specs div {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    padding-block: 10px;
+    border-block-start: 1px solid currentcolor;
+  }
+
+  .rr-pd__specs div:first-child {
+    border-block-start: 0;
+  }
+
+  .rr-pd__specs dt {
+    font-family: var(--rr-font-caps);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .rr-pd__specs dd {
+    margin: 0;
+    text-align: end;
+  }
+
+  .rr-pd__related {
+    margin-block-start: 96px;
+    padding-block: 96px 130px;
+    border-block-start: 1px solid rgb(28 24 20 / 25%);
+  }
+
+  .rr-pd__related-title {
+    margin: 0 0 36px;
+    font-family: var(--rr-font-serif);
+    font-size: 32px;
+    font-weight: 400;
+    text-align: center;
+  }
+
+  .rr-pd__cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  @media (max-width: 1000px) {
+    .rr-pd__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 36px;
+    }
+
+    .rr-pd__side {
+      position: static;
+    }
+
+    .rr-pd__cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .rr-pd {
+      padding-block-start: calc(var(--rr-header-height) + 24px);
+    }
+
+    .rr-pd__thumbs {
+      gap: 12px;
+    }
+
+    .rr-pd__related {
+      margin-block-start: 64px;
+      padding-block: 64px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rr-pd__img,
+    .rr-pd__thumb-img,
+    .rr-pd__btn {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Riverrun product",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_purchase_on_enquiry",
+      "label": "Show price, options and add to cart on enquiry pieces",
+      "info": "Pieces tagged enquire also keep their Enquire button.",
+      "default": true
+    },
+    { "type": "text", "id": "enquire_button_label", "label": "Enquire button", "default": "Enquire about this piece" },
+    { "type": "header", "content": "Labels" },
+    { "type": "text", "id": "shop_label", "label": "Shop breadcrumb", "default": "Shop" },
+    { "type": "text", "id": "reference_label", "label": "Reference label", "default": "Reference" },
+    { "type": "text", "id": "size_label", "label": "Size label", "default": "Size" },
+    { "type": "text", "id": "wood_label", "label": "Wood label", "default": "Wood" },
+    { "type": "text", "id": "variant_label", "label": "Variant label", "default": "Option" },
+    { "type": "text", "id": "view_label", "label": "Thumbnail label (screen readers)", "default": "Show view" },
+    { "type": "text", "id": "next_label", "label": "Next image label (screen readers)", "default": "Next image" },
+    { "type": "header", "content": "Information sections" },
+    { "type": "text", "id": "about_heading", "label": "About heading", "default": "About this piece" },
+    { "type": "text", "id": "details_heading", "label": "Details heading", "default": "Details" },
+    { "type": "text", "id": "shipping_heading", "label": "Shipping heading", "default": "Shipping & delivery" },
+    {
+      "type": "richtext",
+      "id": "shipping_text",
+      "label": "Shipping text",
+      "default": "<p>Delivered in Cape Town and nationwide. The cost is shown at checkout, or collect from 5 Maynard Street.</p>"
+    },
+    { "type": "text", "id": "care_heading", "label": "Care heading", "default": "Care" },
+    {
+      "type": "richtext",
+      "id": "care_text",
+      "label": "Care text",
+      "default": "<p>Dust with a soft, dry cloth. Keep out of direct sun and away from heaters: old wood moves with the seasons.</p>"
+    },
+    { "type": "header", "content": "Related pieces" },
+    { "type": "text", "id": "related_heading", "label": "Heading", "default": "You may also like" }
+  ]
+}
+{% endschema %}
