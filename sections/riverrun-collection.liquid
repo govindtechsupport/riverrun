@@ -37,7 +37,11 @@
               assign card_loading = 'eager'
             endif
           -%}
-          {% render 'riverrun-product-card', product: product, loading: card_loading %}
+          {% render 'riverrun-product-card',
+            product: product,
+            loading: card_loading,
+            show_enquiry_when_unavailable: true
+          %}
         {%- endfor -%}
       </div>
 

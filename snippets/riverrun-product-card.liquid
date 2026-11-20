@@ -3,11 +3,13 @@
   number (wide-spaced capitals) above the piece. The piece is centred with equal space around
   it and never cropped. On hover or focus the card lifts (lighter, 6px up, soft shadow) and
   the price fades in at the bottom in the same font and style as the number. Enquire-only
-  pieces show the enquire label, out-of-stock products show "Sold". The price is always
-  visible on touch screens.
+  pieces show the enquire label and out-of-stock products show "Sold out" by default.
+  Callers can show “Enquiry” instead when a product is unavailable or has no positive price.
+  The price/status is always visible on touch screens.
 
   @param {product} product - The product to render.
   @param {string} [loading] - Image loading strategy: 'lazy' (default) or 'eager'.
+  @param {boolean} [show_enquiry_when_unavailable] - Show “Enquiry” instead of a price when the product has no positive price or is unavailable.
 
   @example
   {% render 'riverrun-product-card', product: product %}
@@ -35,7 +37,13 @@
     {%- endif -%}
   </span>
   <span class="rr-card__price">
-    {%- if product.tags contains 'enquire' -%}
+    {%- if show_enquiry_when_unavailable -%}
+      {%- if product.available and product.price > 0 -%}
+        {{ product.price | money_without_trailing_zeros }}
+      {%- else -%}
+        {{ 'products.product.enquiry' | t }}
+      {%- endif -%}
+    {%- elsif product.tags contains 'enquire' -%}
       {{ settings.riverrun_enquire_label | default: 'enquire' }}
     {%- elsif product.available -%}
       {{ product.price | money_without_trailing_zeros }}

@@ -65,17 +65,18 @@
                 assign img_priority = 'high'
               endif
             -%}
-            {{
-              image
-              | image_url: width: 1800
-              | image_tag:
-                alt: image.alt | default: current_product.title,
-                widths: '600, 900, 1200, 1800',
-                sizes: '(min-width: 1000px) 62vw, 100vw',
-                loading: img_loading,
-                fetchpriority: img_priority,
-                class: 'rr-pd__img'
-            }}
+            <div class="rr-pd__img">
+              {{
+                image
+                | image_url: width: 1800
+                | image_tag:
+                  alt: image.alt | default: current_product.title,
+                  widths: '600, 900, 1200, 1800',
+                  sizes: '(min-width: 1000px) 62vw, 100vw',
+                  loading: img_loading,
+                  fetchpriority: img_priority
+              }}
+            </div>
           {%- endfor -%}
         </div>
 
@@ -213,7 +214,7 @@
           {%- assign shown = 0 -%}
           {%- for item in related -%}
             {%- if item.id != current_product.id and shown < 4 -%}
-              {% render 'riverrun-product-card', product: item %}
+              {% render 'riverrun-product-card', product: item, show_enquiry_when_unavailable: true %}
               {%- assign shown = shown | plus: 1 -%}
             {%- endif -%}
           {%- endfor -%}
@@ -336,19 +337,25 @@
     position: relative;
   }
 
-  /* The photos are 760 x 650 transparent canvases: draw each one the full frame width, centred. */
+  /* Center each full-size image layer, then scale its image to leave room around the product. */
   .rr-pd__img {
     position: absolute;
-    inset-block-start: 50%;
-    inset-inline-start: 50%;
-    width: 100%;
-    max-width: none;
-    height: auto;
-    filter: drop-shadow(0 14px 12px rgb(40 30 15 / 16%));
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     opacity: 0;
-    transform: translate(-50%, -50%);
     transition: opacity 0.4s ease;
     pointer-events: none;
+  }
+
+  .rr-pd__img img {
+    display: block;
+    width: 50%;
+    height: auto;
+    max-height: 72%;
+    object-fit: contain;
+    filter: drop-shadow(0 14px 12px rgb(40 30 15 / 16%));
   }
 
   .rr-pd__img:first-child {
@@ -392,41 +399,40 @@
     opacity: 1;
   }
 
-  /* No-JavaScript path: the main photo follows the thumbnail that is hovered or focused
-     (a click focuses the button), so the gallery still switches if the click script does not run. */
-  .rr-pd__media:has(.rr-pd__thumb:is(:hover, :focus)) .rr-pd__img {
+  /* Keep keyboard and focused-thumbnail selection working without JavaScript. */
+  .rr-pd__media:has(.rr-pd__thumb:focus) .rr-pd__img {
     opacity: 0 !important;
   }
 
-  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(1) .rr-pd__thumb:is(:hover, :focus)) .rr-pd__img:nth-child(1) {
+  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(1) .rr-pd__thumb:focus) .rr-pd__img:nth-child(1) {
     opacity: 1 !important;
   }
 
-  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(2) .rr-pd__thumb:is(:hover, :focus)) .rr-pd__img:nth-child(2) {
+  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(2) .rr-pd__thumb:focus) .rr-pd__img:nth-child(2) {
     opacity: 1 !important;
   }
 
-  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(3) .rr-pd__thumb:is(:hover, :focus)) .rr-pd__img:nth-child(3) {
+  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(3) .rr-pd__thumb:focus) .rr-pd__img:nth-child(3) {
     opacity: 1 !important;
   }
 
-  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(4) .rr-pd__thumb:is(:hover, :focus)) .rr-pd__img:nth-child(4) {
+  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(4) .rr-pd__thumb:focus) .rr-pd__img:nth-child(4) {
     opacity: 1 !important;
   }
 
-  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(5) .rr-pd__thumb:is(:hover, :focus)) .rr-pd__img:nth-child(5) {
+  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(5) .rr-pd__thumb:focus) .rr-pd__img:nth-child(5) {
     opacity: 1 !important;
   }
 
-  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(6) .rr-pd__thumb:is(:hover, :focus)) .rr-pd__img:nth-child(6) {
+  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(6) .rr-pd__thumb:focus) .rr-pd__img:nth-child(6) {
     opacity: 1 !important;
   }
 
-  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(7) .rr-pd__thumb:is(:hover, :focus)) .rr-pd__img:nth-child(7) {
+  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(7) .rr-pd__thumb:focus) .rr-pd__img:nth-child(7) {
     opacity: 1 !important;
   }
 
-  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(8) .rr-pd__thumb:is(:hover, :focus)) .rr-pd__img:nth-child(8) {
+  .rr-pd__media:has(.rr-pd__thumbs li:nth-child(8) .rr-pd__thumb:focus) .rr-pd__img:nth-child(8) {
     opacity: 1 !important;
   }
 

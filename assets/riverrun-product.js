@@ -4,7 +4,7 @@
  * - Clicking the main frame (or pressing Enter / Space / arrow keys on it) shows the next photo.
  *
  * Listeners sit on the document in the capture phase, so they run before other scripts and keep
- * working if the section is re-rendered. Photos are switched with inline opacity on `.rr-pd__img`.
+ * working if the section is re-rendered. Photos are switched with inline opacity on `.rr-pd__img` layers.
  */
 (() => {
   if (window.__rrGalleryBound) return;
@@ -15,12 +15,12 @@
    * @param {number} index - Photo to show (wraps around).
    */
   function show(media, index) {
-    const images = [...media.querySelectorAll('.rr-pd__img')];
-    if (images.length < 2) return;
-    const next = ((index % images.length) + images.length) % images.length;
+    const layers = [...media.querySelectorAll('.rr-pd__img')];
+    if (layers.length < 2) return;
+    const next = ((index % layers.length) + layers.length) % layers.length;
     media.setAttribute('data-index', String(next));
-    images.forEach((image, i) => {
-      image.style.opacity = i === next ? '1' : '0';
+    layers.forEach((layer, i) => {
+      layer.style.opacity = i === next ? '1' : '0';
     });
     media.querySelectorAll('.rr-pd__thumb').forEach((thumb, i) => {
       thumb.setAttribute('aria-pressed', String(i === next));
