@@ -1,11 +1,11 @@
 {% comment %}
   Section contract.
-  Bespoke orders page, chosen option 1 (band + yellow): a looping video band under the
-  header with the gold line "Looking for something specific?", then a yellow section with
-  the heading "Bespoke orders & collaborations", the intro text and an enquiry button.
-  Falls back to the built-in bespoke band video. The button opens an email (subject
-  "Bespoke enquiry") when an email is set, otherwise it goes to the link you choose
-  (for example the contact page). With reduced motion the video is replaced by its still frame.
+  Bespoke orders page, built to the reference mock-up (bespoke.html): a paper-coloured page
+  with a red vertical seal and small label, a large heading, intro text and an enquiry button on
+  the left, a looping video window (4:3) on the right, and a row of up to three numbered
+  steps underneath (Chinese numerals in red). Falls back to the built-in bespoke video. The
+  link opens an email (subject "Bespoke enquiry") when an email is set, otherwise it goes to
+  the link you choose. With reduced motion the video is replaced by its still frame.
   @example
   <!-- templates/page.bespoke.json -->
 {% endcomment %}
@@ -24,43 +24,60 @@
 -%}
 
 <section class="rr-bespoke" {{ section.shopify_attributes }}>
-  <div class="rr-bespoke__band" style="--rr-bespoke-poster: url('{{ poster_url }}')">
-    <video
-      class="rr-bespoke__video"
-      autoplay
-      muted
-      loop
-      playsinline
-      preload="auto"
-      aria-hidden="true"
-      tabindex="-1"
-      poster="{{ poster_url }}"
-    >
-      {%- if section.settings.video != blank -%}
-        {%- for source in section.settings.video.sources -%}
-          <source src="{{ source.url }}" type="{{ source.mime_type }}">
-        {%- endfor -%}
-      {%- else -%}
-        <source src="{{ 'riverrun-bespoke-band.mp4' | asset_url }}" type="video/mp4">
-      {%- endif -%}
-    </video>
-    <div class="rr-bespoke__band-inner">
-      <h1 class="rr-bespoke__headline">{{ section.settings.headline }}</h1>
-    </div>
-  </div>
-
-  <div class="rr-bespoke__intro">
-    <div class="rr-bespoke__wrap">
-      <div class="rr-bespoke__grid">
-        <h2 class="rr-bespoke__title">{{ section.settings.heading | newline_to_br }}</h2>
-        <div>
-          <div class="rr-bespoke__body">{{ section.settings.text }}</div>
-          {%- if enquiry_href != blank and section.settings.button_label != blank -%}
-            <a class="rr-bespoke__btn" href="{{ enquiry_href }}">{{ section.settings.button_label }}</a>
+  <div class="rr-bespoke__wrap">
+    <div class="rr-bespoke__grid">
+      <div class="rr-bespoke__copy">
+        <div class="rr-bespoke__top">
+          {%- if section.settings.seal != blank -%}
+            <span class="rr-bespoke__seal" aria-hidden="true">{{ section.settings.seal }}</span>
+          {%- endif -%}
+          {%- if section.settings.label != blank -%}
+            <p class="rr-bespoke__label">{{ section.settings.label | escape | newline_to_br }}</p>
           {%- endif -%}
         </div>
+        <h1 class="rr-bespoke__title">{{ section.settings.heading }}</h1>
+        <div class="rr-bespoke__body">{{ section.settings.text }}</div>
+        {%- if enquiry_href != blank and section.settings.button_label != blank -%}
+          <a class="rr-bespoke__link" href="{{ enquiry_href }}">{{ section.settings.button_label }}</a>
+        {%- endif -%}
+      </div>
+
+      <div class="rr-bespoke__window" style="--rr-bespoke-poster: url('{{ poster_url }}')">
+        <video
+          class="rr-bespoke__video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          aria-hidden="true"
+          tabindex="-1"
+          poster="{{ poster_url }}"
+        >
+          {%- if section.settings.video != blank -%}
+            {%- for source in section.settings.video.sources -%}
+              <source src="{{ source.url }}" type="{{ source.mime_type }}">
+            {%- endfor -%}
+          {%- else -%}
+            <source src="{{ 'riverrun-bespoke-band.mp4' | asset_url }}" type="video/mp4">
+          {%- endif -%}
+        </video>
       </div>
     </div>
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="rr-bespoke__steps">
+        {%- for block in section.blocks -%}
+          <div class="rr-bespoke__step" {{ block.shopify_attributes }}>
+            {%- if block.settings.mark != blank -%}
+              <p class="rr-bespoke__mark" aria-hidden="true">{{ block.settings.mark }}</p>
+            {%- endif -%}
+            <h2 class="rr-bespoke__step-title">{{ block.settings.title }}</h2>
+            <p class="rr-bespoke__step-text">{{ block.settings.text }}</p>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
   </div>
 </section>
 
@@ -77,59 +94,8 @@
 
 {% stylesheet %}
   .rr-bespoke {
-    padding-top: var(--rr-header-height);
-    background: var(--rr-dark);
-  }
-
-  .rr-bespoke__band {
-    position: relative;
-    height: 62vh;
-    min-height: 440px;
-    overflow: hidden;
-    background: var(--rr-dark) var(--rr-bespoke-poster) center / cover;
-    color: #fff;
-  }
-
-  .rr-bespoke__band::before {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background: rgb(10 9 8 / 50%);
-    content: '';
-  }
-
-  .rr-bespoke__video {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .rr-bespoke__band-inner {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    padding: 0 16px;
-    text-align: center;
-  }
-
-  .rr-bespoke__headline {
-    margin: 0;
-    font-family: var(--rr-font-caps);
-    font-size: clamp(30px, 3.6vw, 52px);
-    font-weight: 400;
-    letter-spacing: 0.16em;
-    text-wrap: balance;
-    color: var(--rr-yellow);
-  }
-
-  .rr-bespoke__intro {
-    padding: 96px 0;
-    background: var(--rr-yellow);
+    padding: calc(var(--rr-header-height) + 48px) 0 96px;
+    background: var(--rr-card);
     color: var(--rr-ink);
   }
 
@@ -141,39 +107,69 @@
   .rr-bespoke__grid {
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: 36px;
-    align-items: start;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .rr-bespoke__top {
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+    margin-bottom: 22px;
+  }
+
+  .rr-bespoke__seal {
+    flex: none;
+    padding: 12px 9px;
+    border: 1px solid var(--rr-red);
+    color: var(--rr-red);
+    font-family: var(--rr-font-cjk);
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    line-height: 1.15;
+    text-orientation: upright;
+    writing-mode: vertical-rl;
+  }
+
+  .rr-bespoke__label {
+    margin: 0;
+    padding-top: 4px;
+    font-family: var(--rr-font-caps);
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    line-height: 1.9;
+    text-transform: uppercase;
   }
 
   .rr-bespoke__title {
-    margin: 0;
+    margin: 0 0 20px;
     font-family: var(--rr-font-serif);
-    font-size: clamp(44px, 4.6vw, 66px);
+    font-size: clamp(44px, 4.4vw, 68px);
     font-weight: 400;
-    line-height: 1.02;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
+    line-height: 1;
+    overflow-wrap: break-word;
   }
 
   .rr-bespoke__body {
-    max-width: 46ch;
-    padding-top: 10px;
+    max-width: 52ch;
     font-family: var(--rr-font-body);
     font-size: 15px;
-    font-style: italic;
     line-height: 1.7;
   }
 
   .rr-bespoke__body p {
-    margin: 0 0 18px;
+    margin: 0 0 12px;
   }
 
   .rr-bespoke__body p:last-child {
     margin-bottom: 0;
   }
 
-  .rr-bespoke__btn {
+  .rr-bespoke__link {
     display: inline-block;
-    margin-top: 36px;
+    margin-top: 24px;
     padding: 15px 28px;
     background: var(--rr-ink);
     color: var(--rr-card);
@@ -186,25 +182,80 @@
     transition: background 0.3s ease;
   }
 
-  .rr-bespoke__btn:hover,
-  .rr-bespoke__btn:focus-visible {
+  .rr-bespoke__link:hover,
+  .rr-bespoke__link:focus-visible {
     background: var(--rr-red);
   }
 
-  .rr-bespoke__btn:focus-visible {
+  .rr-bespoke__link:focus-visible {
     outline: 2px solid var(--rr-ink);
     outline-offset: 3px;
   }
 
+  .rr-bespoke__window {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--rr-dark) var(--rr-bespoke-poster) center / cover;
+  }
+
+  .rr-bespoke__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .rr-bespoke__steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 36px;
+    margin-top: 96px;
+    padding-top: 36px;
+    border-top: 1px solid var(--rr-ink);
+  }
+
+  .rr-bespoke__mark {
+    margin: 0 0 18px;
+    color: var(--rr-red);
+    font-family: var(--rr-font-cjk);
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .rr-bespoke__step-title {
+    margin: 0 0 18px;
+    font-family: var(--rr-font-serif);
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.15;
+  }
+
+  .rr-bespoke__step-text {
+    max-width: 34ch;
+    margin: 0;
+    font-family: var(--rr-font-body);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
   @media (max-width: 900px) {
-    .rr-bespoke__grid {
+    .rr-bespoke__grid,
+    .rr-bespoke__steps {
       grid-template-columns: minmax(0, 1fr);
+      gap: 36px;
     }
   }
 
   @media (max-width: 760px) {
-    .rr-bespoke__intro {
-      padding: 64px 0;
+    .rr-bespoke {
+      padding: calc(var(--rr-header-height) + 64px) 0 64px;
+    }
+
+    .rr-bespoke__steps {
+      margin-top: 64px;
     }
   }
 {% endstylesheet %}
@@ -212,24 +263,47 @@
 {% schema %}
 {
   "name": "Riverrun Bespoke",
+  "max_blocks": 3,
   "settings": [
-    { "type": "header", "content": "Video band" },
-    { "type": "text", "id": "headline", "label": "Band headline", "default": "Looking for something specific?" },
-    { "type": "video", "id": "video", "label": "Video", "info": "Leave empty to use the built-in bespoke band video." },
-    { "type": "image_picker", "id": "poster", "label": "Still frame" },
-    { "type": "header", "content": "Yellow section" },
-    { "type": "textarea", "id": "heading", "label": "Heading", "default": "Bespoke orders\n& collaborations" },
+    { "type": "header", "content": "Heading" },
+    { "type": "text", "id": "seal", "label": "Red seal characters", "default": "川道" },
+    { "type": "textarea", "id": "label", "label": "Small label", "default": "Bespoke orders\n& collaborations" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Looking for something specific?" },
     {
       "type": "richtext",
       "id": "text",
       "label": "Text",
       "default": "<p>Our Riverrun team travels to China often, wandering the markets and back-street workshops in search of pieces worth bringing home. Everything in the shop is chosen by hand.</p><p>But sometimes what you have in mind hasn't crossed our path yet. Tell us what you are looking for and we will hunt for it on our next trip, or have it made from scratch by one of our verified craftsmen.</p><p>From a single made-to-measure piece to full interior design consultancy, we love to help you find something that truly belongs.</p>"
     },
-    { "type": "text", "id": "button_label", "label": "Button", "default": "Make an enquiry" },
+    { "type": "header", "content": "Enquiry link" },
+    { "type": "text", "id": "button_label", "label": "Link text", "default": "Make an enquiry →" },
     { "type": "text", "id": "email", "label": "Enquiry email", "info": "hello@riverrun.co.za is still to be confirmed by the client." },
     { "type": "text", "id": "subject", "label": "Email subject", "default": "Bespoke enquiry" },
-    { "type": "url", "id": "link", "label": "Enquiry link", "info": "Used when no email is set, for example the contact page." }
+    { "type": "url", "id": "link", "label": "Enquiry link", "info": "Used when no email is set, for example the contact page." },
+    { "type": "header", "content": "Video window" },
+    { "type": "video", "id": "video", "label": "Video", "info": "Leave empty to use the built-in bespoke video." },
+    { "type": "image_picker", "id": "poster", "label": "Still frame" }
   ],
-  "presets": [{ "name": "Riverrun Bespoke" }]
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        { "type": "text", "id": "mark", "label": "Numeral", "default": "一" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Bespoke orders" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "A piece made to your measurements, or found for you on our next trip to the markets in China." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Riverrun Bespoke",
+      "blocks": [
+        { "type": "step", "settings": { "mark": "一", "title": "Bespoke orders", "text": "A piece made to your measurements, or found for you on our next trip to the markets in China." } },
+        { "type": "step", "settings": { "mark": "二", "title": "Interior styling", "text": "Help choosing, pairing and placing pieces, from a single corner to a whole home." } },
+        { "type": "step", "settings": { "mark": "三", "title": "Collaborations", "text": "Working with interior designers, architects, hotels and restaurants on pieces for their projects." } }
+      ]
+    }
+  ]
 }
 {% endschema %}

@@ -1,18 +1,19 @@
 {
   "sections": {
-    "intro": {
-      "type": "riverrun-page-intro",
-      "settings": { "style": "paper", "mark": "", "heading": "Contact us" }
+    "showroom": {
+      "type": "riverrun-showroom",
+      "settings": { "email": "hello@riverrun.co.za" }
     },
     "form": {
       "type": "riverrun-enquiry-form",
       "settings": {
         "heading": "Send us a message",
         "subject": "Website enquiry",
-        "details_heading": "Visit the showroom",
-        "address": "5 Maynard Street\nCape Town"
+        "details_heading": "Get in touch",
+        "email": "hello@riverrun.co.za",
+        "instagram_handle": "@riverrun_decor"
       }
     }
   },
-  "order": ["intro", "form"]
+  "order": ["showroom", "form"]
 }

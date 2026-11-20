@@ -1,40 +1,52 @@
 {% comment %}
   Section contract.
   Enquiry form for the Bespoke and Contact pages, using Shopify's native contact form
-  (submissions are emailed to the store's customer email). Optional address block
-  (address, email, web, map link) shown beside the form. No phone number by design.
+  (submissions are emailed to the store's customer email). Optional "Get in touch" column
+  (email and Instagram, each with an icon) shown beside the form. No phone number by design.
   @example
   <!-- templates/page.bespoke.json: "Tell us what you are looking for" -->
 {% endcomment %}
 
 {%- liquid
   assign form_id = 'rr-enquiry-' | append: section.id
-  assign address = section.settings.address
+  assign email = section.settings.email
+  assign instagram_handle = section.settings.instagram_handle
+  assign show_details = false
+  if email != blank or instagram_handle != blank
+    assign show_details = true
+  endif
 -%}
 
 <section class="rr-enquiry" {{ section.shopify_attributes }}>
-  <div class="rr-enquiry__grid{% if address == blank %} rr-enquiry__grid--single{% endif %}">
-    {%- if address != blank -%}
+  <div class="rr-enquiry__grid{% unless show_details %} rr-enquiry__grid--single{% endunless %}">
+    {%- if show_details -%}
       <div class="rr-enquiry__details">
         {%- if section.settings.details_heading != blank -%}
           <h2 class="rr-enquiry__title">{{ section.settings.details_heading }}</h2>
         {%- endif -%}
-        <p>{{ address | newline_to_br }}</p>
-        <p>
-          {%- if section.settings.email != blank -%}
-            <a href="mailto:{{ section.settings.email | escape }}">{{ section.settings.email }}</a><br>
+        <ul class="rr-enquiry__list">
+          {%- if email != blank -%}
+            <li>
+              <a class="rr-enquiry__contact" href="mailto:{{ email | escape }}">
+                <svg class="rr-enquiry__icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="m3.5 6.5 8.5 7 8.5-7"/></svg>
+                <span>{{ email }}</span>
+              </a>
+            </li>
           {%- endif -%}
-          {%- if section.settings.website != blank -%}
-            {{ section.settings.website }}
+          {%- if instagram_handle != blank -%}
+            {%- assign handle = instagram_handle | remove: '@' | strip -%}
+            {%- assign instagram_href = section.settings.instagram_url | default: 'https://www.instagram.com/' | append: handle -%}
+            {%- if section.settings.instagram_url != blank -%}
+              {%- assign instagram_href = section.settings.instagram_url -%}
+            {%- endif -%}
+            <li>
+              <a class="rr-enquiry__contact" href="{{ instagram_href }}" target="_blank" rel="noopener">
+                <svg class="rr-enquiry__icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.6" fill="currentColor"/></svg>
+                <span>@{{ handle }}</span>
+              </a>
+            </li>
           {%- endif -%}
-        </p>
-        {%- if section.settings.map_link != blank -%}
-          <p>
-            <a class="rr-enquiry__map" href="{{ section.settings.map_link }}" target="_blank" rel="noopener">
-              {{- section.settings.map_label -}}
-            </a>
-          </p>
-        {%- endif -%}
+        </ul>
       </div>
     {%- endif -%}
 
@@ -130,19 +142,39 @@
     line-height: 1.8;
   }
 
-  .rr-enquiry__details p {
-    margin: 0 0 1em;
+  .rr-enquiry__list {
+    display: grid;
+    gap: 5px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .rr-enquiry__contact {
+    display: inline-flex;
+    gap: 14px;
+    align-items: center;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .rr-enquiry__contact:hover,
+  .rr-enquiry__contact:focus-visible {
+    color: var(--rr-red);
+  }
+
+  .rr-enquiry__contact:focus-visible {
+    outline: 2px solid var(--rr-ink);
+    outline-offset: 4px;
+  }
+
+  .rr-enquiry__icon {
+    flex: none;
   }
 
   .rr-enquiry a {
     color: inherit;
-  }
-
-  .rr-enquiry__map {
-    font-style: italic;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-size: 13px;
   }
 
   .rr-enquiry__form {
@@ -182,22 +214,21 @@
 
   .rr-enquiry__submit {
     justify-self: start;
-    padding: 0 0 4px;
+    padding: 15px 28px;
     border: 0;
-    border-bottom: 1px solid currentcolor;
-    background: none;
+    background: var(--rr-ink);
     font-family: var(--rr-font-body);
     font-size: 13px;
     font-style: italic;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--rr-ink);
+    color: var(--rr-card);
     cursor: pointer;
-    transition: opacity 0.3s ease;
+    transition: background 0.3s ease;
   }
 
   .rr-enquiry__submit:hover {
-    opacity: 0.6;
+    background: var(--rr-red);
   }
 
   .rr-enquiry__submit:focus-visible {
@@ -241,13 +272,11 @@
     { "type": "text", "id": "message_label", "label": "Message label", "default": "Your message" },
     { "type": "text", "id": "button_label", "label": "Button", "default": "Send enquiry" },
     { "type": "text", "id": "success_message", "label": "Success message", "default": "Thank you. We will be in touch soon." },
-    { "type": "header", "content": "Details (Contact page)" },
-    { "type": "text", "id": "details_heading", "label": "Details heading", "default": "Visit the showroom" },
-    { "type": "textarea", "id": "address", "label": "Address", "info": "Leave empty to hide the details column." },
-    { "type": "text", "id": "email", "label": "Email address", "info": "Supplied by the client." },
-    { "type": "text", "id": "website", "label": "Website", "default": "www.riverrun.co.za" },
-    { "type": "url", "id": "map_link", "label": "Map link", "info": "A Google Maps link to the showroom." },
-    { "type": "text", "id": "map_label", "label": "Map link label", "default": "View on map" }
+    { "type": "header", "content": "Get in touch (Contact page)" },
+    { "type": "text", "id": "details_heading", "label": "Heading", "default": "Get in touch" },
+    { "type": "text", "id": "email", "label": "Email address", "info": "Shown with an email icon. Leave empty to hide." },
+    { "type": "text", "id": "instagram_handle", "label": "Instagram handle", "info": "For example @riverrun_decor. Shown with an Instagram icon. Leave empty to hide." },
+    { "type": "url", "id": "instagram_url", "label": "Instagram link", "info": "Optional. Defaults to instagram.com/ followed by the handle." }
   ],
   "presets": [{ "name": "Riverrun enquiry form" }]
 }

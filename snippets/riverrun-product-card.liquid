@@ -1,7 +1,10 @@
 {% doc %}
-  Riverrun product card: beige card, product name in wide-spaced capitals at the top,
-  the front-on photo at the bottom (grows 4% on hover) and the price fading in at the
-  bottom on hover (always visible on touch screens). Out-of-stock products show "Sold".
+  Riverrun product card: beige 3:4 card with even spacing. At rest it shows only the piece
+  number (wide-spaced capitals) above the piece. The piece is centred with equal space around
+  it and never cropped. On hover or focus the card lifts (lighter, 6px up, soft shadow) and
+  the price fades in at the bottom in the same font and style as the number. Enquire-only
+  pieces show the enquire label, out-of-stock products show "Sold". The price is always
+  visible on touch screens.
 
   @param {product} product - The product to render.
   @param {string} [loading] - Image loading strategy: 'lazy' (default) or 'eager'.
@@ -17,8 +20,8 @@
 
 <a class="rr-card" href="{{ product.url }}" data-rr-card>
   <span class="rr-card__name">{{ product.title | escape }}</span>
-  {%- if image != blank -%}
-    <span class="rr-card__stage">
+  <span class="rr-card__pics">
+    {%- if image != blank -%}
       {{
         image
         | image_url: width: 900
@@ -29,8 +32,8 @@
           loading: card_loading,
           class: 'rr-card__pic'
       }}
-    </span>
-  {%- endif -%}
+    {%- endif -%}
+  </span>
   <span class="rr-card__price">
     {%- if product.tags contains 'enquire' -%}
       {{ settings.riverrun_enquire_label | default: 'enquire' }}
@@ -44,73 +47,70 @@
 
 {% stylesheet %}
   .rr-card {
+    --rr-card-pad: clamp(22px, 2.8vw, 40px);
+    --rr-card-lift: #faf6ea;
+
     position: relative;
-    display: block;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    row-gap: var(--rr-card-pad);
+    padding: var(--rr-card-pad);
     aspect-ratio: 3 / 4;
     overflow: hidden;
     background: var(--rr-card);
     color: var(--rr-ink);
     text-decoration: none;
+    transition:
+      background-color 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+      transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+      box-shadow 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
-  .rr-card__name {
-    position: absolute;
-    top: 19%;
-    right: 0;
-    left: 0;
-    padding-inline: 8px;
+  .rr-card__name,
+  .rr-card__price {
     font-family: var(--rr-font-caps);
     font-size: clamp(11px, 1.05vw, 15px);
     letter-spacing: 0.22em;
-    text-indent: 0.22em;
+    line-height: 1.2;
     text-align: center;
+    text-indent: 0.22em;
     text-transform: uppercase;
   }
 
-  /* The photos are 3:2 canvases with transparent padding, so the picture is drawn wider than
-     the card (the card clips it) to make the piece itself about 70% of the card width.
-     It rests near the bottom, under the name. */
-  .rr-card__stage {
-    position: absolute;
-    right: 0;
-    bottom: 14%;
-    left: 0;
+  /* The photos are 760 x 650 transparent canvases and the piece fills about 80% of them. The
+     canvas is drawn 82% of the card width, centred in the picture area, so the piece is about
+     40% of the card wide (wide pieces more) with equal space around it. Only transparent padding
+     reaches the edge, so the piece is never cropped. */
+  .rr-card__pics {
+    position: relative;
     display: block;
-    pointer-events: none;
+    min-height: 0;
   }
 
   .rr-card__pic {
-    display: block;
-    width: 122%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc((100% + var(--rr-card-pad) * 2) * 0.82);
     max-width: none;
     height: auto;
-    margin-inline: -11%;
     filter: drop-shadow(0 12px 12px rgb(40 30 15 / 14%));
-    transform-origin: 50% 82%;
-    transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
-  }
-
-  .rr-card:hover .rr-card__pic,
-  .rr-card:focus-visible .rr-card__pic {
-    transform: scale(1.12);
+    transform: translate(-50%, -50%);
   }
 
   .rr-card__price {
-    position: absolute;
-    right: 0;
-    bottom: 5%;
-    left: 0;
-    font-family: var(--rr-font-body);
-    font-size: 13px;
-    font-style: italic;
-    letter-spacing: 0.1em;
-    text-align: center;
-    text-transform: uppercase;
     opacity: 0;
     transform: translateY(4px);
     transition:
       opacity 0.4s ease,
       transform 0.4s ease;
+  }
+
+  .rr-card:hover,
+  .rr-card:focus-visible {
+    background: var(--rr-card-lift);
+    box-shadow: 0 18px 30px rgb(60 40 10 / 18%);
+    transform: translateY(-6px);
   }
 
   .rr-card:hover .rr-card__price,
@@ -132,7 +132,12 @@
   }
 
   @media (max-width: 760px) {
-    .rr-card__name {
+    .rr-card {
+      --rr-card-pad: 18px;
+    }
+
+    .rr-card__name,
+    .rr-card__price {
       font-size: 10px;
       letter-spacing: 0.14em;
       text-indent: 0.14em;
@@ -140,9 +145,14 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .rr-card__pic,
+    .rr-card,
     .rr-card__price {
       transition: none;
+    }
+
+    .rr-card:hover,
+    .rr-card:focus-visible {
+      transform: none;
     }
   }
 {% endstylesheet %}

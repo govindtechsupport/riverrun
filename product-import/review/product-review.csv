@@ -1,0 +1,148 @@
+Title,URL handle,First-pick photo,Photos in number range,Photos imported,Confidence,What to check
+No. 8001,no-8001,FRA_8001.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8003,no-8003,FRA_8003.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8007,no-8007,FRA_8007.webp,5,5,medium,gallery photos come from number order and are not verified
+No. 8017,no-8017,FRA_8017.webp,5,5,medium,gallery photos come from number order and are not verified
+No. 8026,no-8026,FRA_8026.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8032,no-8032,FRA_8032.webp,1,1,low,single photo: neighbouring photos may belong to this piece | first-pick is next to No. 8033: may be the same piece
+No. 8033,no-8033,FRA_8033.webp,3,3,low,gallery photos come from number order and are not verified | first-pick is next to No. 8032: may be the same piece
+No. 8037,no-8037,FRA_8037.webp,5,4,low,photo 8041 left out: Different grey cabinet from No. 8037 (seen on contact sheet) | gallery photos come from number order and are not verified
+No. 8042,no-8042,FRA_8042.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8044,no-8044,FRA_8044.webp,1,1,low,single photo: neighbouring photos may belong to this piece | first-pick is next to No. 8045: may be the same piece
+No. 8045,no-8045,FRA_8045.webp,4,4,low,gallery photos come from number order and are not verified | first-pick is next to No. 8044: may be the same piece
+No. 8049,no-8049,FRA_8049.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 8053,no-8053,FRA_8053.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8055,no-8055,FRA_8055.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8063,no-8063,FRA_8063.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8071,no-8071,FRA_8071.webp,1,1,low,single photo: neighbouring photos may belong to this piece | first-pick is next to No. 8072: may be the same piece
+No. 8072,no-8072,FRA_8072.webp,2,2,low,gallery photos come from number order and are not verified | first-pick is next to No. 8071: may be the same piece
+No. 8078,no-8078,FRA_8078.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8087,no-8087,FRA_8087.webp,5,5,medium,gallery photos come from number order and are not verified
+No. 8095,no-8095,FRA_8095.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8104,no-8104,FRA_8104.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8110,no-8110,FRA_8110.webp,1,1,low,single photo: neighbouring photos may belong to this piece | first-pick is next to No. 8111: may be the same piece
+No. 8111,no-8111,FRA_8111.webp,6,1,low,"large group (6 photos): only the first-pick is imported, extra photos are in unassigned-photos.csv | first-pick is next to No. 8110: may be the same piece"
+No. 8128,no-8128,FRA_8128.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8130,no-8130,FRA_8130.webp,1,1,low,single photo: neighbouring photos may belong to this piece | first-pick is next to No. 8131: may be the same piece
+No. 8131,no-8131,FRA_8131.webp,5,5,low,gallery photos come from number order and are not verified | first-pick is next to No. 8130: may be the same piece
+No. 8157,no-8157,FRA_8157.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8169,no-8169,FRA_8169.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 8172,no-8172,FRA_8172.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8180,no-8180,FRA_8180.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8190,no-8190,FRA_8190.webp,1,1,low,single photo: neighbouring photos may belong to this piece | first-pick is next to No. 8191: may be the same piece
+No. 8191,no-8191,FRA_8191.webp,7,1,low,"large group (7 photos): only the first-pick is imported, extra photos are in unassigned-photos.csv | first-pick is next to No. 8190: may be the same piece"
+No. 8212,no-8212,FRA_8212.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8228,no-8228,FRA_8228.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8246,no-8246,FRA_8246.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 8257,no-8257,FRA_8257.webp,6,1,low,"large group (6 photos): only the first-pick is imported, extra photos are in unassigned-photos.csv"
+No. 8279,no-8279,FRA_8279.webp,8,1,low,"large group (8 photos): only the first-pick is imported, extra photos are in unassigned-photos.csv"
+No. 8303,no-8303,FRA_8303.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 8305,no-8305,FRA_8305.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8310,no-8310,FRA_8310.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8323,no-8323,FRA_8323.webp,5,5,medium,gallery photos come from number order and are not verified
+No. 8356,no-8356,FRA_8356.webp,5,5,medium,gallery photos come from number order and are not verified
+No. 8374,no-8374,FRA_8374.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 8383,no-8383,FRA_8383.webp,6,1,low,"large group (6 photos): only the first-pick is imported, extra photos are in unassigned-photos.csv"
+No. 8399,no-8399,FRA_8399.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8405,no-8405,FRA_8405.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 8410,no-8410,FRA_8410.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 8420,no-8420,FRA_8420.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8434,no-8434,FRA_8434.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8439,no-8439,FRA_8439.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8448,no-8448,FRA_8448.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8464,no-8464,FRA_8464.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 8472,no-8472,FRA_8472.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8491,no-8491,FRA_8491.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 8493,no-8493,FRA_8493.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8498,no-8498,FRA_8498.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 8513,no-8513,FRA_8513.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 8517,no-8517,FRA_8517.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 8523,no-8523,FRA_8523.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 8531,no-8531,FRA_8531.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8540,no-8540,FRA_8540.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8544,no-8544,FRA_8544.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8547,no-8547,FRA_8547.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8550,no-8550,FRA_8550.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8553,no-8553,FRA_8553.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 8560,no-8560,FRA_8560.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8571,no-8571,FRA_8571.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 8575,no-8575,FRA_8575.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 8577,no-8577,FRA_8577.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 8579,no-8579,FRA_8579.webp,3,2,low,"photo 8586 left out: Close-up of a carved table leg, not the stool No. 8579 (seen on contact sheet) | gallery photos come from number order and are not verified"
+No. 8589,no-8589,FRA_8589.webp,7,1,low,"large group (7 photos): only the first-pick is imported, extra photos are in unassigned-photos.csv"
+No. 8613,no-8613,FRA_8613.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8625,no-8625,FRA_8625.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8641,no-8641,FRA_8641.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 8649,no-8649,FRA_8649.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 8651,no-8651,FRA_8651.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8657,no-8657,FRA_8657.webp,5,5,medium,gallery photos come from number order and are not verified
+No. 8676,no-8676,FRA_8676.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8681,no-8681,FRA_8681.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8692,no-8692,FRA_8692.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8697,no-8697,FRA_8697.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8711,no-8711,FRA_8711.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 8723,no-8723,FRA_8723.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8734,no-8734,FRA_8734.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8739,no-8739,FRA_8739.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 8744,no-8744,FRA_8744.webp,6,1,low,"large group (6 photos): only the first-pick is imported, extra photos are in unassigned-photos.csv"
+No. 8762,no-8762,FRA_8762.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8772,no-8772,FRA_8772.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 8781,no-8781,FRA_8781.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 8783,no-8783,FRA_8783.webp,8,1,low,"large group (8 photos): only the first-pick is imported, extra photos are in unassigned-photos.csv"
+No. 8805,no-8805,FRA_8805.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8818,no-8818,FRA_8818.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8831,no-8831,FRA_8831.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8846,no-8846,FRA_8846.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8856,no-8856,FRA_8856.webp,5,5,medium,gallery photos come from number order and are not verified
+No. 8870,no-8870,FRA_8870.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8881,no-8881,FRA_8881.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8890,no-8890,FRA_8890.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 8903,no-8903,FRA_8903.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8915,no-8915,FRA_8915.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8919,no-8919,FRA_8919.webp,10,1,low,"large group (10 photos): only the first-pick is imported, extra photos are in unassigned-photos.csv"
+No. 8953,no-8953,FRA_8953.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 8968,no-8968,FRA_8968.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 8981,no-8981,FRA_8981.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 9003,no-9003,FRA_9003.webp,5,5,medium,gallery photos come from number order and are not verified
+No. 9016,no-9016,FRA_9016.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 9018,no-9018,FRA_9018.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 9028,no-9028,FRA_9028.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 9039,no-9039,FRA_9039.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 9044,no-9044,FRA_9044.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 9053,no-9053,FRA_9053.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 9062,no-9062,FRA_9062.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 9072,no-9072,FRA_9072.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 9080,no-9080,FRA_9080.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 9089,no-9089,FRA_9089.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 9101,no-9101,FRA_9101.webp,5,5,medium,gallery photos come from number order and are not verified
+No. 9118,no-9118,FRA_9118.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 9128,no-9128,FRA_9128.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 9138,no-9138,FRA_9138.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 9152,no-9152,FRA_9152.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 9156,no-9156,FRA_9156.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 9163,no-9163,FRA_9163.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 9175,no-9175,FRA_9175.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 9178,no-9178,FRA_9178.webp,6,1,low,"large group (6 photos): only the first-pick is imported, extra photos are in unassigned-photos.csv"
+No. 9198,no-9198,FRA_9198.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 9203,no-9203,FRA_9203.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 9208,no-9208,FRA_9208.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 9210,no-9210,FRA_9210.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 9213,no-9213,FRA_9213.webp,6,1,low,"large group (6 photos): only the first-pick is imported, extra photos are in unassigned-photos.csv"
+No. 9233,no-9233,FRA_9233.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 9243,no-9243,FRA_9243.webp,6,1,low,"large group (6 photos): only the first-pick is imported, extra photos are in unassigned-photos.csv"
+No. 9264,no-9264,FRA_9264.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 9277,no-9277,FRA_9277.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 9280,no-9280,FRA_9280.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 9284,no-9284,FRA_9284.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 9289,no-9289,FRA_9289.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 9306,no-9306,FRA_9306.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 9329,no-9329,FRA_9329.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 9333,no-9333,FRA_9333.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 9340,no-9340,FRA_9340.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 9353,no-9353,FRA_9353.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 9369,no-9369,FRA_9369.webp,2,2,medium,gallery photos come from number order and are not verified
+No. 9401,no-9401,FRA_9401.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 9413,no-9413,FRA_9413.webp,1,1,low,single photo: neighbouring photos may belong to this piece
+No. 9416,no-9416,FRA_9416.webp,4,4,medium,gallery photos come from number order and are not verified
+No. 9422,no-9422,FRA_9422.webp,3,3,medium,gallery photos come from number order and are not verified
+No. 9427,no-9427,FRA_9427.webp,7,1,low,"large group (7 photos): only the first-pick is imported, extra photos are in unassigned-photos.csv"

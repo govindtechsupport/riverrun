@@ -2,18 +2,29 @@
   Section contract.
   Riverrun collection page: logo-yellow ground, collection title and description, optional
   category links (a menu of collections, e.g. Cabinets, Tables, Consoles), and the same
-  product cards as the homepage, 8 at a time with a "Show more" link.
+  product cards as the homepage, 8 at a time with a "Show more" link. The shop page (all
+  products) shows the homepage heading "The Collection" with its intro line underneath.
   @example
   <!-- templates/collection.json -->
 {% endcomment %}
 
 {% render 'riverrun-collection-styles' %}
 
+{%- liquid
+  # The shop page (all products) uses the homepage heading and intro line.
+  assign page_title = collection.title
+  assign page_intro = collection.description
+  if collection.handle == 'all'
+    assign page_title = section.settings.shop_heading | default: collection.title
+    assign page_intro = section.settings.shop_intro
+  endif
+-%}
+
 <section class="rr-collection rr-collection--page" {{ section.shopify_attributes }}>
   <div class="rr-collection__head">
-    <h1 class="rr-collection__title">{{ collection.title }}</h1>
-    {%- if collection.description != blank -%}
-      <div class="rr-collection__intro">{{ collection.description }}</div>
+    <h1 class="rr-collection__title">{{ page_title }}</h1>
+    {%- if page_intro != blank -%}
+      <div class="rr-collection__intro">{{ page_intro }}</div>
     {%- endif -%}
   </div>
 
@@ -132,6 +143,10 @@
 {
   "name": "Riverrun collection page",
   "settings": [
+    { "type": "header", "content": "Shop page (all products)" },
+    { "type": "text", "id": "shop_heading", "label": "Heading", "default": "The Collection", "info": "Replaces the collection title on the shop page. Other collections keep their own title." },
+    { "type": "text", "id": "shop_intro", "label": "Intro line", "default": "Original pieces from China, hand picked one at a time." },
+    { "type": "header", "content": "Categories" },
     {
       "type": "link_list",
       "id": "categories",

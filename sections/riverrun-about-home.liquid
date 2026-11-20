@@ -1,0 +1,190 @@
+{% comment %}
+  Section contract.
+  Home page "About" section, built to the new home mock-up: a yellow band with a framed looping
+  video (4:3) on the left, and on the right a seal, a small label, a large headline and a short
+  paragraph. Sits between the bespoke band and "Visit the showroom". Falls back to the built-in
+  About video. The video and its still frame load lazily (assets/riverrun-lazy-video.js). With reduced motion the video is replaced by its still frame.
+  @example
+  <!-- templates/index.json: after the bespoke band, before the showroom -->
+{% endcomment %}
+
+{%- liquid
+  assign poster_url = 'riverrun-about-still.jpg' | asset_url
+  if section.settings.poster != blank
+    assign poster_url = section.settings.poster | image_url: width: 1600
+  endif
+-%}
+
+<section class="rr-abouth" id="rr-about" {{ section.shopify_attributes }}>
+  <div class="rr-abouth__grid">
+    <div class="rr-abouth__window" data-rr-lazy-frame>
+      <video
+        class="rr-abouth__video"
+        muted
+        loop
+        playsinline
+        preload="none"
+        aria-hidden="true"
+        tabindex="-1"
+        data-poster="{{ poster_url }}"
+        data-rr-lazy-video
+      >
+        {%- if section.settings.video != blank -%}
+          {%- for source in section.settings.video.sources -%}
+            <source data-src="{{ source.url }}" type="{{ source.mime_type }}">
+          {%- endfor -%}
+        {%- else -%}
+          <source data-src="{{ 'riverrun-about.mp4' | asset_url }}" type="video/mp4">
+        {%- endif -%}
+      </video>
+    </div>
+
+    <div class="rr-abouth__copy">
+      <div class="rr-abouth__top">
+        {%- if section.settings.seal != blank -%}
+          <span class="rr-abouth__seal" aria-hidden="true">{{ section.settings.seal }}</span>
+        {%- endif -%}
+        {%- if section.settings.label != blank -%}
+          <p class="rr-abouth__label">{{ section.settings.label | escape | newline_to_br }}</p>
+        {%- endif -%}
+      </div>
+      <h2 class="rr-abouth__title">{{ section.settings.headline | escape | newline_to_br }}</h2>
+      <div class="rr-abouth__text">{{ section.settings.text }}</div>
+    </div>
+  </div>
+</section>
+
+<script src="{{ 'riverrun-lazy-video.js' | asset_url }}" defer="defer"></script>
+<script>
+  (() => {
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.querySelectorAll('.rr-abouth video').forEach((v) => {
+      v.hidden = true;
+    });
+  })();
+</script>
+
+{% stylesheet %}
+  .rr-abouth {
+    padding: 120px 0;
+    background: var(--rr-yellow);
+    color: var(--rr-ink);
+    scroll-margin-top: var(--rr-header-height);
+  }
+
+  .rr-abouth__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 64px;
+    align-items: center;
+    width: min(var(--rr-grid-width), calc(100% - var(--rr-gutter) * 2));
+    margin: 0 auto;
+  }
+
+  .rr-abouth__window {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--rr-dark) var(--rr-lazy-poster, none) center / cover;
+  }
+
+  .rr-abouth__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .rr-abouth__top {
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+    margin-bottom: 36px;
+  }
+
+  .rr-abouth__seal {
+    flex: none;
+    padding: 12px 9px;
+    border: 1px solid var(--rr-ink);
+    font-family: var(--rr-font-cjk);
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    line-height: 1.15;
+    text-orientation: upright;
+    writing-mode: vertical-rl;
+  }
+
+  .rr-abouth__label {
+    margin: 0;
+    padding-top: 4px;
+    font-family: var(--rr-font-caps);
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    line-height: 1.9;
+    text-transform: uppercase;
+  }
+
+  .rr-abouth__title {
+    margin: 0 0 36px;
+    font-family: var(--rr-font-serif);
+    font-size: clamp(48px, 5vw, 76px);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    line-height: 1;
+    overflow-wrap: break-word;
+  }
+
+  .rr-abouth__text {
+    max-width: 44ch;
+    font-family: var(--rr-font-body);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .rr-abouth__text p {
+    margin: 0;
+  }
+
+  .rr-abouth__text p + p {
+    margin-top: 18px;
+  }
+
+  @media (max-width: 900px) {
+    .rr-abouth {
+      padding: 90px 0;
+    }
+
+    .rr-abouth__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 48px;
+    }
+
+    .rr-abouth__window {
+      order: 2;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Riverrun home About",
+  "settings": [
+    { "type": "header", "content": "Text" },
+    { "type": "text", "id": "seal", "label": "Seal characters", "default": "川道" },
+    { "type": "textarea", "id": "label", "label": "Small label", "default": "About\nRiverrun" },
+    { "type": "textarea", "id": "headline", "label": "Headline", "default": "Original Asian\nfurniture with\na story" },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Riverrun is an oriental furniture store offering hand picked, curated original pieces from China. Each piece is chosen for home owners and interior decorators who want something considered and authentic rather than a mass copy.</p>"
+    },
+    { "type": "header", "content": "Video window" },
+    { "type": "video", "id": "video", "label": "Video", "info": "Leave empty to use the built-in About video." },
+    { "type": "image_picker", "id": "poster", "label": "Still frame" }
+  ],
+  "presets": [{ "name": "Riverrun home About" }]
+}
+{% endschema %}

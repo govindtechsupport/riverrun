@@ -1,0 +1,111 @@
+{% comment %}
+  Section contract.
+  Text page for the default page template (Shipping, Terms, Privacy policy and similar):
+  paper background that starts below the fixed header, the page title as the only H1 and the
+  page content in a readable column. Its left edge lines up with the header logo and footer. Reads the title and content from the page.
+  @example
+  <!-- templates/page.json -->
+{% endcomment %}
+
+<section class="rr-page" {{ section.shopify_attributes }}>
+  <div class="rr-page__wrap">
+    <h1 class="rr-page__title">{{ page.title | escape }}</h1>
+    <div class="rr-page__content">{{ page.content }}</div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .rr-page {
+    padding-block: calc(var(--rr-header-height) + 96px) 120px;
+    padding-inline: max(var(--rr-gutter), calc((100% - var(--rr-grid-width)) / 2));
+    background: var(--rr-card);
+    color: var(--rr-ink);
+  }
+
+  .rr-page__wrap {
+    max-width: 760px;
+  }
+
+  .rr-page__title {
+    margin: 0 0 48px;
+    font-family: var(--rr-font-serif);
+    font-size: clamp(40px, 4.4vw, 64px);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    line-height: 1.05;
+    overflow-wrap: break-word;
+  }
+
+  .rr-page__content {
+    font-family: var(--rr-font-body);
+    font-size: 15px;
+    line-height: 1.75;
+    overflow-wrap: break-word;
+  }
+
+  .rr-page__content > :first-child {
+    margin-top: 0;
+  }
+
+  .rr-page__content h2,
+  .rr-page__content h3,
+  .rr-page__content h4 {
+    margin: 2.2em 0 0.6em;
+    font-family: var(--rr-font-serif);
+    font-weight: 400;
+    line-height: 1.15;
+  }
+
+  .rr-page__content h2 {
+    font-size: 30px;
+  }
+
+  .rr-page__content h3 {
+    font-size: 24px;
+  }
+
+  .rr-page__content h4 {
+    font-size: 20px;
+  }
+
+  .rr-page__content p,
+  .rr-page__content ul,
+  .rr-page__content ol {
+    margin: 0 0 1.2em;
+  }
+
+  .rr-page__content ul,
+  .rr-page__content ol {
+    padding-inline-start: 1.4em;
+  }
+
+  .rr-page__content a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.3s ease;
+  }
+
+  .rr-page__content a:hover,
+  .rr-page__content a:focus-visible {
+    color: var(--rr-red);
+  }
+
+  .rr-page__content img,
+  .rr-page__content table {
+    max-width: 100%;
+  }
+
+  @media (max-width: 760px) {
+    .rr-page {
+      padding-block: calc(var(--rr-header-height) + 56px) 80px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Riverrun text page",
+  "presets": [{ "name": "Riverrun text page" }]
+}
+{% endschema %}

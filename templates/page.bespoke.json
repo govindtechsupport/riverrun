@@ -2,6 +2,33 @@
   "sections": {
     "bespoke": {
       "type": "riverrun-bespoke",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "mark": "一",
+            "title": "Bespoke orders",
+            "text": "A piece made to your measurements, or found for you on our next trip to the markets in China."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "mark": "二",
+            "title": "Interior styling",
+            "text": "Help choosing, pairing and placing pieces, from a single corner to a whole home."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "mark": "三",
+            "title": "Collaborations",
+            "text": "Working with interior designers, architects, hotels and restaurants on pieces for their projects."
+          }
+        }
+      },
+      "block_order": ["step_1", "step_2", "step_3"],
       "settings": { "email": "hello@riverrun.co.za" }
     }
   },

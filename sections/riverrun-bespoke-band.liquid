@@ -10,20 +10,20 @@
   {%- if section.settings.video != blank -%}
     <video
       class="rr-band__media"
-      autoplay
       muted
       loop
       playsinline
-      preload="metadata"
+      preload="none"
       aria-hidden="true"
       tabindex="-1"
       {% if section.settings.image != blank %}
-        poster="{{ section.settings.image | image_url: width: 1600 }}"
+        data-poster="{{ section.settings.image | image_url: width: 1600 }}"
       {% endif %}
       data-rr-band-video
+      data-rr-lazy-video
     >
       {%- for source in section.settings.video.sources -%}
-        <source src="{{ source.url }}" type="{{ source.mime_type }}">
+        <source data-src="{{ source.url }}" type="{{ source.mime_type }}">
       {%- endfor -%}
     </video>
   {%- elsif section.settings.image != blank -%}
@@ -35,17 +35,17 @@
   {%- else -%}
     <video
       class="rr-band__media"
-      autoplay
       muted
       loop
       playsinline
-      preload="metadata"
+      preload="none"
       aria-hidden="true"
       tabindex="-1"
-      poster="{{ 'riverrun-bespoke-band-still.jpg' | asset_url }}"
+      data-poster="{{ 'riverrun-bespoke-band-still.jpg' | asset_url }}"
       data-rr-band-video
+      data-rr-lazy-video
     >
-      <source src="{{ 'riverrun-bespoke-band.mp4' | asset_url }}" type="video/mp4">
+      <source data-src="{{ 'riverrun-bespoke-band.mp4' | asset_url }}" type="video/mp4">
     </video>
   {%- endif -%}
 
@@ -55,13 +55,12 @@
   {%- endif -%}
 </section>
 
+<script src="{{ 'riverrun-lazy-video.js' | asset_url }}" defer="defer"></script>
 <script>
   (() => {
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    document.querySelectorAll('[data-rr-band-video]').forEach((v) => {
-      v.removeAttribute('autoplay');
-      v.pause();
-    });
+    // Reduced motion: the lazy loader only fetches the still frame, never the clip.
+    document.querySelectorAll('[data-rr-band-video]').forEach((v) => v.pause());
   })();
 </script>
 
