@@ -2,7 +2,7 @@
   Section contract.
   Riverrun collection page: logo-yellow ground, collection title and description, optional
   category links (a menu of collections, e.g. Cabinets, Tables, Consoles), and the same
-  product cards as the homepage, 8 at a time with a "Show more" link. The shop page (all
+  product cards as the homepage, 24 at a time with a "Show more" link. The shop page (all
   products) shows the homepage heading "The Collection" with its intro line underneath.
   @example
   <!-- templates/collection.json -->
@@ -62,7 +62,7 @@
     </nav>
   {%- endif -%}
 
-  {%- paginate collection.products by 8 -%}
+  {%- paginate collection.products by 24 -%}
     <rr-show-more class="rr-collection__body">
       <div class="rr-collection__grid" data-rr-grid>
         {%- for product in collection.products -%}

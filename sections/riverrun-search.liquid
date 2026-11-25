@@ -1,0 +1,256 @@
+{% comment %}
+  Section contract.
+  Riverrun search page with a brand-styled search form, custom product cards, and paginated
+  text results for articles, collections, and pages.
+  @example
+  <!-- templates/search.json -->
+{% endcomment %}
+
+{% render 'riverrun-collection-styles' %}
+
+<section class="rr-search" {{ section.shopify_attributes }}>
+  <div class="rr-search__wrap">
+    <header class="rr-search__header">
+      <h1 class="rr-search__title">
+        {%- if search.performed -%}{{ 'content.search_results' | t }}{%- else -%}{{ 'content.search' | t }}{%- endif -%}
+      </h1>
+      <form class="rr-search__form" action="{{ routes.search_url }}" method="get" role="search">
+        <label class="visually-hidden" for="RiverrunSearch">{{ 'content.search_input_label' | t }}</label>
+        <input
+          id="RiverrunSearch"
+          class="rr-search__input"
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          placeholder="{{ 'content.search_input_placeholder' | t }}"
+          autocapitalize="off"
+          autocomplete="off"
+        >
+        <input type="hidden" name="options[prefix]" value="last">
+        <button class="rr-search__button" type="submit">{{ 'content.search' | t }}</button>
+      </form>
+    </header>
+
+    {%- if search.performed -%}
+      {%- paginate search.results by 12 -%}
+        {%- if search.results_count > 0 -%}
+          <p class="rr-search__count" role="status">
+            {{ 'accessibility.search_results_count' | t: count: search.results_count, query: search.terms | escape }}
+          </p>
+          <div class="rr-search__grid">
+            {%- for result in search.results -%}
+              {%- if result.object_type == 'product' -%}
+                {%- liquid
+                  assign result_loading = 'lazy'
+                  if forloop.index <= 4 and paginate.current_page == 1
+                    assign result_loading = 'eager'
+                  endif
+                -%}
+                {% render 'riverrun-product-card', product: result, loading: result_loading %}
+              {%- else -%}
+                <article class="rr-search__result">
+                  <p class="rr-search__type">
+                    {%- case result.object_type -%}
+                      {%- when 'article' -%}{{ 'content.search_results_resource_articles' | t }}
+                      {%- when 'collection' -%}{{ 'content.search_results_resource_collections' | t }}
+                      {%- else -%}{{ 'content.search_results_resource_pages' | t }}
+                    {%- endcase -%}
+                  </p>
+                  <h2 class="rr-search__result-title"><a href="{{ result.url }}">{{ result.title | escape }}</a></h2>
+                  {%- if result.content != blank -%}
+                    <p class="rr-search__excerpt">{{ result.content | strip_html | truncatewords: 28 | escape }}</p>
+                  {%- endif -%}
+                </article>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+
+          {%- if paginate.pages > 1 -%}
+            <nav class="rr-search__pagination" aria-label="{{ 'content.pagination.nav_label' | t }}">
+              {%- if paginate.previous -%}
+                <a href="{{ paginate.previous.url }}">{{ 'content.pagination.previous' | t }}</a>
+              {%- endif -%}
+              <span>{{ paginate.current_page }} / {{ paginate.pages }}</span>
+              {%- if paginate.next -%}
+                <a href="{{ paginate.next.url }}">{{ 'content.pagination.next' | t }}</a>
+              {%- endif -%}
+            </nav>
+          {%- endif -%}
+        {%- else -%}
+          <p class="rr-search__empty" role="status">
+            {{ 'content.search_results_no_results' | t: terms: search.terms | escape }}
+          </p>
+        {%- endif -%}
+      {%- endpaginate -%}
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .rr-search {
+    min-height: 70vh;
+    padding: calc(var(--rr-header-height) + 64px) var(--rr-gutter) 96px;
+    background: var(--rr-yellow);
+    color: var(--rr-ink);
+  }
+
+  .rr-search__wrap {
+    width: min(var(--rr-grid-width), 100%);
+    margin-inline: auto;
+  }
+
+  .rr-search__header {
+    max-width: 720px;
+    margin: 0 auto 56px;
+    text-align: center;
+  }
+
+  .rr-search__title {
+    margin: 0 0 28px;
+    font-family: var(--rr-font-serif);
+    font-size: clamp(42px, 5vw, 68px);
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  .rr-search__form {
+    display: flex;
+    gap: 10px;
+  }
+
+  .rr-search__input {
+    flex: 1;
+    min-width: 0;
+    padding: 14px 16px;
+    border: 1px solid rgb(28 24 20 / 45%);
+    border-radius: 0;
+    background: var(--rr-card);
+    color: var(--rr-ink);
+    font: inherit;
+  }
+
+  .rr-search__button {
+    padding: 14px 24px;
+    border: 0;
+    background: var(--rr-ink);
+    color: var(--rr-card);
+    font-family: var(--rr-font-body);
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .rr-search__button:hover {
+    background: var(--rr-red);
+  }
+
+  .rr-search__button:focus-visible,
+  .rr-search__input:focus-visible {
+    outline: 2px solid var(--rr-ink);
+    outline-offset: 3px;
+  }
+
+  .rr-search__count,
+  .rr-search__empty {
+    margin: 0 0 28px;
+    font-family: var(--rr-font-body);
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .rr-search__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .rr-search__result {
+    min-width: 0;
+    padding: 28px;
+    background: var(--rr-card);
+  }
+
+  .rr-search__type {
+    margin: 0 0 14px;
+    font-family: var(--rr-font-body);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .rr-search__result-title {
+    margin: 0;
+    font-family: var(--rr-font-serif);
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.1;
+  }
+
+  .rr-search__result-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .rr-search__result-title a:hover {
+    color: var(--rr-red);
+  }
+
+  .rr-search__excerpt {
+    margin: 16px 0 0;
+    font-family: var(--rr-font-body);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .rr-search__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    margin-block-start: 48px;
+    font-family: var(--rr-font-body);
+    font-size: 13px;
+  }
+
+  .rr-search__pagination a {
+    color: inherit;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+
+  @media (max-width: 760px) {
+    .rr-search {
+      padding-block: calc(var(--rr-header-height) + 42px) 64px;
+    }
+
+    .rr-search__header {
+      margin-block-end: 40px;
+    }
+
+    .rr-search__form {
+      gap: 8px;
+    }
+
+    .rr-search__button {
+      padding-inline: 16px;
+    }
+
+    .rr-search__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .rr-search__result {
+      padding: 18px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Riverrun search",
+  "settings": []
+}
+{% endschema %}

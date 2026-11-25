@@ -1,9 +1,8 @@
 {% comment %}
   Section contract.
   Riverrun product page (the "Gallery + details" layout): beige gallery frame with
-  thumbnails on the left; name, price, reference, buy or enquire button and open/close
-  information sections on the right; related pieces below. Pieces tagged "enquire" show
-  an enquire button instead of the buy form.
+  thumbnails on the left; name, price, reference, add-to-cart and optional enquiry buttons,
+  and open/close information sections on the right; related pieces below.
   @example
   <!-- templates/product.json: section "main" -->
 {% endcomment %}
@@ -24,15 +23,8 @@
   assign image_count = media_images.size
   assign selected_variant = current_product.selected_or_first_available_variant
 
-  # Enquiry pieces still show price, options and add to cart when the merchant setting is on.
+  # Keep Add to cart as the primary action; enquiry pieces also retain a secondary enquiry link.
   assign show_buy = true
-  if is_enquiry and section.settings.show_purchase_on_enquiry == false
-    assign show_buy = false
-  endif
-  assign show_price = show_buy
-  if selected_variant.price == 0
-    assign show_price = false
-  endif
 -%}
 
 <section class="rr-pd" {{ section.shopify_attributes }}>
@@ -106,14 +98,8 @@
         <h1 class="rr-pd__title">{{ current_product.title | escape }}</h1>
 
         <p class="rr-pd__price">
-          {%- if show_price -%}
-            {{ selected_variant.price | money_without_trailing_zeros }}
-            <span class="rr-pd__currency">{{ cart.currency.iso_code }}</span>
-          {%- elsif is_enquiry -%}
-            {{ settings.riverrun_enquire_label | default: 'enquire' }}
-          {%- else -%}
-            {{ 'products.product.sold_out' | t }}
-          {%- endif -%}
+          {{ selected_variant.price | money_without_trailing_zeros }}
+          <span class="rr-pd__currency">{{ cart.currency.iso_code | default: shop.currency }}</span>
         </p>
 
         {%- if selected_variant.sku != blank -%}
@@ -168,20 +154,24 @@
           {%- endif -%}
           <details {% if current_product.description == blank %}open{% endif %}>
             <summary>{{ section.settings.details_heading }}</summary>
-            <dl class="rr-pd__specs">
-              <div>
-                <dt>{{ section.settings.size_label }}</dt>
-                <dd>{{ current_product.metafields.custom.size.value | default: '–' | escape }}</dd>
-              </div>
-              <div>
-                <dt>{{ section.settings.wood_label }}</dt>
-                <dd>{{ current_product.metafields.custom.wood.value | default: '–' | escape }}</dd>
-              </div>
-              <div>
-                <dt>{{ section.settings.reference_label }}</dt>
-                <dd>{{ selected_variant.sku | replace: 'FRA_', 'No. ' | default: '–' }}</dd>
-              </div>
-            </dl>
+            {%- if current_product.metafields.custom.size.value != blank or current_product.metafields.custom.wood.value != blank -%}
+              <dl class="rr-pd__specs">
+                {%- if current_product.metafields.custom.size.value != blank -%}
+                  <div>
+                    <dt>{{ section.settings.size_label }}</dt>
+                    <dd>{{ current_product.metafields.custom.size.value | escape }}</dd>
+                  </div>
+                {%- endif -%}
+                {%- if current_product.metafields.custom.wood.value != blank -%}
+                  <div>
+                    <dt>{{ section.settings.wood_label }}</dt>
+                    <dd>{{ current_product.metafields.custom.wood.value | escape }}</dd>
+                  </div>
+                {%- endif -%}
+              </dl>
+            {%- else -%}
+              <p class="rr-pd__empty-details">{{ section.settings.details_empty_text | default: 'No additional details are available for this piece.' | escape }}</p>
+            {%- endif -%}
           </details>
           {%- if section.settings.shipping_text != blank -%}
             <details>
@@ -214,7 +204,7 @@
           {%- assign shown = 0 -%}
           {%- for item in related -%}
             {%- if item.id != current_product.id and shown < 4 -%}
-              {% render 'riverrun-product-card', product: item, show_enquiry_when_unavailable: true %}
+              {% render 'riverrun-product-card', product: item %}
               {%- assign shown = shown | plus: 1 -%}
             {%- endif -%}
           {%- endfor -%}
@@ -351,9 +341,9 @@
 
   .rr-pd__img img {
     display: block;
-    width: 50%;
+    width: 70%;
     height: auto;
-    max-height: 72%;
+    max-height: 90%;
     object-fit: contain;
     filter: drop-shadow(0 14px 12px rgb(40 30 15 / 16%));
   }
@@ -458,6 +448,7 @@
   .rr-pd__label {
     margin: 0;
     font-family: var(--rr-font-caps);
+    -webkit-text-stroke: 0.5px currentColor;
     font-size: 12px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -584,6 +575,7 @@
     justify-content: space-between;
     padding-block: 16px;
     font-family: var(--rr-font-caps);
+    -webkit-text-stroke: 0.7px currentColor;
     font-size: 12px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -631,6 +623,13 @@
     margin: 0 0 18px;
     font-family: var(--rr-font-body);
     font-size: 13px;
+  }
+
+  .rr-pd__empty-details {
+    margin: 0 0 18px;
+    font-family: var(--rr-font-body);
+    font-size: 14px;
+    line-height: 1.75;
   }
 
   .rr-pd__specs div {
@@ -721,13 +720,6 @@
 {
   "name": "Riverrun product",
   "settings": [
-    {
-      "type": "checkbox",
-      "id": "show_purchase_on_enquiry",
-      "label": "Show price, options and add to cart on enquiry pieces",
-      "info": "Pieces tagged enquire also keep their Enquire button.",
-      "default": true
-    },
     { "type": "text", "id": "enquire_button_label", "label": "Enquire button", "default": "Enquire about this piece" },
     { "type": "header", "content": "Labels" },
     { "type": "text", "id": "shop_label", "label": "Shop breadcrumb", "default": "Shop" },
@@ -740,6 +732,7 @@
     { "type": "header", "content": "Information sections" },
     { "type": "text", "id": "about_heading", "label": "About heading", "default": "About this piece" },
     { "type": "text", "id": "details_heading", "label": "Details heading", "default": "Details" },
+    { "type": "text", "id": "details_empty_text", "label": "Empty details message", "default": "No additional details are available for this piece." },
     { "type": "text", "id": "shipping_heading", "label": "Shipping heading", "default": "Shipping & delivery" },
     {
       "type": "richtext",

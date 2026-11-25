@@ -19,6 +19,24 @@ class RrHeader extends HTMLElement {
     this.mobile?.addEventListener('click', (e) => e.target.closest('a') && this.setMenu(false), { signal });
     this.addEventListener('keydown', (e) => e.key === 'Escape' && this.setMenu(false), { signal });
 
+    this.accountToggle = this.querySelector('[data-rr-account-toggle]');
+    this.accountMenu = this.querySelector('.rr-header__dropdown');
+    this.accountToggle?.addEventListener('click', () => this.setAccount(this.accountMenu.hidden), { signal });
+    document.addEventListener(
+      'click',
+      (e) => e.target instanceof Node && !this.querySelector('[data-rr-account]')?.contains(e.target) && this.setAccount(false),
+      { signal }
+    );
+    this.addEventListener(
+      'keydown',
+      (e) => {
+        if (e.key !== 'Escape' || !this.accountMenu || this.accountMenu.hidden) return;
+        this.setAccount(false);
+        this.accountToggle?.focus();
+      },
+      { signal }
+    );
+
     this.update();
     // Horizon scrolls inside `.page-wrapper` on desktop (the window itself never scrolls),
     // and scroll events do not bubble, so listen on the document in the capture phase.
@@ -43,6 +61,13 @@ class RrHeader extends HTMLElement {
     const visible = this.openingLogo ? this.openingLogo.getBoundingClientRect().bottom < 0 : true;
     this.toggleAttribute('data-visible', visible);
     if (!visible) this.setMenu(false);
+  }
+
+  /** @param {boolean} open */
+  setAccount(open) {
+    if (!this.accountMenu || !this.accountToggle) return;
+    this.accountMenu.hidden = !open;
+    this.accountToggle.setAttribute('aria-expanded', String(open));
   }
 
   /** @param {boolean} open */

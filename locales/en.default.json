@@ -8,6 +8,12 @@
  * ------------------------------------------------------------
  */
 {
+  "riverrun_account": {
+    "login": "Login",
+    "profile": "Profile",
+    "orders": "Orders",
+    "sign_out": "Sign out"
+  },
   "accessibility": {
     "account": "Account",
     "active_filters": "Active filters:",

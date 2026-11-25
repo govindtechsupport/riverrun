@@ -1,7 +1,7 @@
 {% comment %}
   Section contract.
-  Riverrun opening screen: full screen, two looping muted videos side by side (stacked on
-  phones) with a slight dark overlay, the beige logo centred on the seam, the tagline under
+  Riverrun opening screen: full screen, two looping muted videos side by side on desktop and
+  the Shoji video alone on phones, with a slight dark overlay, centered beige logo, and tagline under
   it, and a pulsing "Scroll" cue. Both videos buffer first, then start together; they pause
   when scrolled out of view and stay paused with reduced motion.
   @example
@@ -29,14 +29,14 @@
         assign fallback_poster = 'riverrun-shoji-still.jpg' | asset_url
       endif
     -%}
-    <div class="rr-opening__half">
+    <div class="rr-opening__half" data-rr-opening-side="{{ side }}">
       {%- if video != blank or poster == blank -%}
         <video
           class="rr-opening__video"
           muted
           loop
           playsinline
-          preload="auto"
+          preload="none"
           aria-hidden="true"
           tabindex="-1"
           {% if poster != blank %}
@@ -94,7 +94,7 @@
 
 {% stylesheet %}
   .rr-opening {
-    --rr-fade: 4s;
+    --rr-fade: 3s;
 
     position: relative;
     display: flex;
@@ -172,6 +172,7 @@
     left: 0;
     margin: clamp(14px, 1.8vw, 30px) 0 0;
     font-family: var(--rr-font-caps);
+    -webkit-text-stroke: 0.35px currentColor;
     font-size: clamp(10px, 1.1vw, 17px);
     letter-spacing: 0.6em;
     word-spacing: 0.5em;
@@ -244,8 +245,12 @@
       flex-direction: column;
     }
 
+    .rr-opening__half[data-rr-opening-side='left'] {
+      display: none;
+    }
+
     .rr-opening__half + .rr-opening__half {
-      box-shadow: 0 -1px 0 rgb(255 255 255 / 14%);
+      box-shadow: none;
     }
 
     .rr-opening__logo {

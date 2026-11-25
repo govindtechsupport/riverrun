@@ -2,7 +2,7 @@
   Section contract.
   "The Collection" block on the logo-yellow ground: heading, one intro line, and a grid of
   Riverrun product cards four across (two on phones) inside a 1182px block with 18px gaps.
-  Shows 8 pieces first, then a "Show more" link that adds 8 at a time. The link is a real
+  Shows 24 pieces first, then a "Show more" link that adds 24 at a time. The link is a real
   pagination link, so it still works without JavaScript.
   @example
   <!-- templates/index.json: pick the collection holding all pieces -->
@@ -27,7 +27,7 @@
     {%- endif -%}
   </div>
 
-  {%- paginate source.products by 8 -%}
+  {%- paginate source.products by 24 -%}
     <rr-show-more class="rr-collection__body">
       <div class="rr-collection__grid" data-rr-grid>
         {%- for product in source.products -%}
@@ -39,8 +39,7 @@
           -%}
           {% render 'riverrun-product-card',
             product: product,
-            loading: card_loading,
-            show_enquiry_when_unavailable: true
+            loading: card_loading
           %}
         {%- endfor -%}
       </div>

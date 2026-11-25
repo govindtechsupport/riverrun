@@ -1,0 +1,75 @@
+{% comment %}
+  Section contract.
+  Riverrun product recommendations for pages without a current product, including the cart and
+  not-found page. Shows up to four products from the chosen collection (all products by default)
+  on the brand yellow.
+  @example
+  <!-- templates/cart.json and templates/404.json -->
+{% endcomment %}
+
+{%- liquid
+  assign source = section.settings.collection | default: collections['all']
+  assign shown = 0
+-%}
+
+<section class="rr-related" {{ section.shopify_attributes }}>
+  <div class="rr-related__wrap">
+    <h2 class="rr-related__title">{{ section.settings.heading | escape }}</h2>
+    <div class="rr-related__cards">
+      {%- for item in source.products -%}
+        {%- if shown < 4 -%}
+          {% render 'riverrun-product-card', product: item %}
+          {%- assign shown = shown | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .rr-related {
+    padding-block: 96px 130px;
+    padding-inline: max(var(--rr-gutter), calc((100% - var(--rr-grid-width)) / 2));
+    border-block-start: 1px solid rgb(28 24 20 / 25%);
+    background: var(--rr-yellow);
+    color: var(--rr-ink);
+  }
+
+  .rr-related__title {
+    margin: 0 0 36px;
+    font-family: var(--rr-font-serif);
+    font-size: 32px;
+    font-weight: 400;
+    text-align: center;
+  }
+
+  .rr-related__cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  @media (max-width: 1000px) {
+    .rr-related__cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .rr-related {
+      padding-block: 64px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Riverrun related pieces",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "You may also like" },
+    { "type": "collection", "id": "collection", "label": "Collection", "info": "Leave empty to use all products." }
+  ],
+  "presets": [{ "name": "Riverrun related pieces" }]
+}
+{% endschema %}

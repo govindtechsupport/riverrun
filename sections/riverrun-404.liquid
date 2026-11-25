@@ -1,0 +1,87 @@
+{% comment %}
+  Section contract.
+  Riverrun-styled not-found message with a direct route back to the shop.
+  @example
+  <!-- templates/404.json -->
+{% endcomment %}
+
+<section class="rr-404" {{ section.shopify_attributes }}>
+  <div class="rr-404__content">
+    <h1 class="rr-404__title">{{ section.settings.heading | escape }}</h1>
+    <p class="rr-404__text">{{ section.settings.message | escape }}</p>
+    <a class="rr-404__link" href="{{ routes.all_products_collection_url }}">
+      {{- section.settings.button_label | escape -}}
+    </a>
+  </div>
+</section>
+
+{% stylesheet %}
+  .rr-404 {
+    display: grid;
+    min-height: 380px;
+    place-items: center;
+    padding: calc(var(--rr-header-height) + 24px) var(--rr-gutter) 48px;
+    background: var(--rr-yellow);
+    color: var(--rr-ink);
+    text-align: center;
+  }
+
+  .rr-404__content {
+    width: min(620px, 100%);
+  }
+
+  .rr-404__title {
+    margin: 0;
+    font-family: var(--rr-font-serif);
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  .rr-404__text {
+    margin: 20px 0 28px;
+    font-family: var(--rr-font-body);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .rr-404__link {
+    display: inline-block;
+    padding: 15px 28px;
+    background: var(--rr-ink);
+    color: var(--rr-card);
+    font-family: var(--rr-font-body);
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+  }
+
+  .rr-404__link:hover {
+    background: var(--rr-red);
+  }
+
+  .rr-404__link:focus-visible {
+    outline: 2px solid var(--rr-ink);
+    outline-offset: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rr-404__link {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Riverrun 404 page",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Page not found" },
+    { "type": "text", "id": "message", "label": "Message", "default": "The link may be incorrect, or the page has been removed." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Continue shopping" }
+  ]
+}
+{% endschema %}

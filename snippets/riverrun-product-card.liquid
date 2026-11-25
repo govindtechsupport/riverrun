@@ -2,15 +2,13 @@
   Riverrun product card: beige 3:4 card with even spacing. At rest it shows only the piece
   number (wide-spaced capitals) above the piece. The piece is centred with equal space around
   it and never cropped. On hover or focus the card lifts (lighter, 6px up, soft shadow) and
-  the price fades in at the bottom in the same font and style as the number. Enquire-only
-  pieces show the enquire label and out-of-stock products show "Sold out" by default.
-  Callers can show “Enquiry” instead when a product is unavailable or has no positive price.
+  the price fades in at the bottom in the same font and style as the number. Out-of-stock
+  products show "Sold out" when they have a nonzero price.
+  A zero-priced product displays a zero amount with the active currency.
   The price/status is always visible on touch screens.
 
   @param {product} product - The product to render.
   @param {string} [loading] - Image loading strategy: 'lazy' (default) or 'eager'.
-  @param {boolean} [show_enquiry_when_unavailable] - Show “Enquiry” instead of a price when the product has no positive price or is unavailable.
-
   @example
   {% render 'riverrun-product-card', product: product %}
 {% enddoc %}
@@ -37,14 +35,8 @@
     {%- endif -%}
   </span>
   <span class="rr-card__price">
-    {%- if show_enquiry_when_unavailable -%}
-      {%- if product.available and product.price > 0 -%}
-        {{ product.price | money_without_trailing_zeros }}
-      {%- else -%}
-        {{ 'products.product.enquiry' | t }}
-      {%- endif -%}
-    {%- elsif product.tags contains 'enquire' -%}
-      {{ settings.riverrun_enquire_label | default: 'enquire' }}
+    {%- if product.price == 0 -%}
+      0 {{ cart.currency.iso_code | default: shop.currency }}
     {%- elsif product.available -%}
       {{ product.price | money_without_trailing_zeros }}
     {%- else -%}
@@ -56,13 +48,14 @@
 {% stylesheet %}
   .rr-card {
     --rr-card-pad: clamp(22px, 2.8vw, 40px);
+    --rr-card-pad-inline: clamp(8px, 1vw, 14px);
     --rr-card-lift: #faf6ea;
 
     position: relative;
     display: grid;
     grid-template-rows: auto minmax(0, 1fr) auto;
     row-gap: var(--rr-card-pad);
-    padding: var(--rr-card-pad);
+    padding: var(--rr-card-pad) var(--rr-card-pad-inline);
     aspect-ratio: 3 / 4;
     overflow: hidden;
     background: var(--rr-card);
@@ -77,6 +70,7 @@
   .rr-card__name,
   .rr-card__price {
     font-family: var(--rr-font-caps);
+    -webkit-text-stroke: 0.35px currentColor;
     font-size: clamp(11px, 1.05vw, 15px);
     letter-spacing: 0.22em;
     line-height: 1.2;
@@ -86,8 +80,8 @@
   }
 
   /* The photos are 760 x 650 transparent canvases and the piece fills about 80% of them. The
-     canvas is drawn 82% of the card width, centred in the picture area, so the piece is about
-     40% of the card wide (wide pieces more) with equal space around it. Only transparent padding
+     canvas is drawn about the full card width (side padding is kept small), centred in the picture
+     area, so the piece is about 80% of the card wide with equal space around it. Only transparent padding
      reaches the edge, so the piece is never cropped. */
   .rr-card__pics {
     position: relative;
@@ -99,7 +93,7 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    width: calc((100% + var(--rr-card-pad) * 2) * 0.82);
+    width: calc((100% + var(--rr-card-pad-inline) * 2) * 1.02);
     max-width: none;
     height: auto;
     filter: drop-shadow(0 12px 12px rgb(40 30 15 / 14%));
@@ -142,6 +136,7 @@
   @media (max-width: 760px) {
     .rr-card {
       --rr-card-pad: 18px;
+      --rr-card-pad-inline: 8px;
     }
 
     .rr-card__name,

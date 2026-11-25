@@ -146,6 +146,7 @@
   .rr-tile__label {
     bottom: 23%;
     font-family: var(--rr-font-caps);
+    -webkit-text-stroke: 0.35px currentColor;
     font-size: clamp(12px, 1.25vw, 19px);
     letter-spacing: 0.22em;
     text-indent: 0.22em;
@@ -191,6 +192,12 @@
   .rr-tile:focus-visible {
     outline: 2px solid var(--rr-white);
     outline-offset: -6px;
+  }
+
+  @media (min-width: 761px) and (max-width: 1024px) {
+    .rr-tiles {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
   @media (max-width: 760px) {
